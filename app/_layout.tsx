@@ -2,14 +2,16 @@ import { useUnistyles } from 'react-native-unistyles';
 
 import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
-import * as SplashScreen  from 'expo-splash-screen';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import { Providers } from '~/components/layout/providers';
 
-// SplashScreen.setOptions({
-//   duration: 1000,
-//   fade: true,
-// });
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+});
 
-// SplashScreen.preventAutoHideAsync();  
+SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
   const { theme } = useUnistyles();
@@ -19,18 +21,28 @@ export default function Layout() {
     Nunito: require('../assets/fonts/Nunito/Nunito-VariableFont_wght.ttf'),
   });
 
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hide();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) return null;
+
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        headerStyle: {
-          backgroundColor: theme.colors.background,
-        },
-        headerTitleStyle: {
-          color: theme.colors.typography,
-        },
-        headerTintColor: theme.colors.typography,
-      }}
-    />
+    <Providers>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerTitleStyle: {
+            color: theme.colors.typography,
+          },
+          headerTintColor: theme.colors.typography,
+        }}
+      />
+    </Providers>
   );
 }
