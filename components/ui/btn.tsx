@@ -19,23 +19,24 @@ export function useButtonVariant() {
 
 type BtnProps = TouchableOpacityProps & UnistylesVariants<typeof styles>;
 
-
-export const Button = forwardRef<View, BtnProps>(({ children, variant = "solid", ...props }, ref) => {
+export const Button = forwardRef<View, BtnProps>(
+  ({ children, variant = 'solid', ...props }, ref) => {
     styles.useVariants({
-        variant,
-    })
-  const contextValue = {
-    variant,
-  } satisfies ButtonVariantContextType;
+      variant,
+    });
+    const contextValue = {
+      variant,
+    } satisfies ButtonVariantContextType;
 
-  return (
-    <ButtonVariantContext.Provider value={contextValue}>
-      <TouchableOpacity ref={ref} {...props} style={[styles.button, props.style]}>
-        {children}
-      </TouchableOpacity>
-    </ButtonVariantContext.Provider>
-  );
-});
+    return (
+      <ButtonVariantContext.Provider value={contextValue}>
+        <TouchableOpacity ref={ref} {...props} style={[styles.button, props.style]}>
+          {children}
+        </TouchableOpacity>
+      </ButtonVariantContext.Provider>
+    );
+  }
+);
 
 Button.displayName = 'Button';
 
@@ -45,24 +46,21 @@ export const ButtonText = (props: React.ComponentProps<typeof Text>) => {
   return (
     <Text
       font="federant"
-      size='lg'
-    //   weight='black'
+      size="lg"
+      //   weight='black'
       color={variant === 'outline' ? 'primary' : 'white'}
-      {...props} />
+      {...props}
+    />
   );
 };
 
 /* Button icon-related code */
-export const ButtonIcon = ({ name, ...props }: Omit<React.ComponentProps<typeof Icon>, "color">) => {
+export const ButtonIcon = ({
+  name,
+  ...props
+}: Omit<React.ComponentProps<typeof Icon>, 'color'>) => {
   const { variant } = useButtonVariant();
-  return (
-    <Icon
-      name={name}
-      size={18}
-      color={variant === 'solid' ? 'white' : 'astral'}
-      {...props}
-    />
-  );
+  return <Icon name={name} size={18} color={variant === 'solid' ? 'white' : 'astral'} {...props} />;
 };
 
 const styles = StyleSheet.create((theme) => ({
@@ -86,16 +84,16 @@ const styles = StyleSheet.create((theme) => ({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     variants: {
-        variant: {
-            solid: {
-                backgroundColor: theme.colors.astral,
-                borderColor: 'transparent',
-              },
-              outline: {
-                backgroundColor: 'transparent',
-                borderColor: theme.colors.astral,
-              },
-        }
-    }
+      variant: {
+        solid: {
+          backgroundColor: theme.colors.astral,
+          borderColor: 'transparent',
+        },
+        outline: {
+          backgroundColor: 'transparent',
+          borderColor: theme.colors.astral,
+        },
+      },
+    },
   },
 }));

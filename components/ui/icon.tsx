@@ -10,7 +10,7 @@ export const Icon = ({
   size?: number;
   color: keyof ThemeColors;
 }) => {
-  const { theme } = useUnistyles()
+  const { theme } = useUnistyles();
   const selectedColor = theme.colors[color];
   return <FontAwesome style={styles.tabBarIcon} color={selectedColor} {...props} />;
 };
