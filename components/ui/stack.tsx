@@ -4,7 +4,7 @@ import { StyleSheet, UnistylesVariants } from 'react-native-unistyles';
 
 export type StackProps = ViewProps &
   UnistylesVariants<typeof styles> & {
-    reverse: boolean;
+    reverse?: boolean;
   };
 
 type Direction = 'row' | 'row-reverse' | 'column' | 'column-reverse';
