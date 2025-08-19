@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "cartopy",
+    "slug": "cartopy",
+    "version": "1.0.0",
+    "newArchEnabled": true,
+    "scheme": "cartopy",
+    "plugins": [
+      "expo-router",
+      "expo-web-browser",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "",
+          "image": "./assets/images/icon-logo-2.png",
+          "dark": {
+            "image": "./assets/images/icon-logo-2.png",
+            "backgroundColor": "#000000"
+          },
+          "imageWidth": 200
+        }
+      ],
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "tsconfigPaths": true
+    },
+    "orientation": "portrait",
+    "icon": "./assets/images/icon-logo-2.png",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jukiyoomi.cartopy"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon-logo-2.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.jukiyoomi.cartopy"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "30e144c1-673c-4401-bc9e-e51835e35e95"
+      }
+    }
+  }
+}
