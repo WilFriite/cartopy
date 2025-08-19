@@ -10,7 +10,7 @@ const styles = StyleSheet.create((theme, rt) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
-    padding: theme.spacing.lg,
+    padding: theme.spacing.xl,
     paddingBottom: rt.insets.bottom,
   },
 }));
