@@ -1,15 +1,21 @@
 import { Stack, Tabs } from 'expo-router';
+import { useUnistyles } from 'react-native-unistyles';
 import { Icon } from '~/components/ui/icon';
 
 export default function ListsPagesLayout() {
+  const { theme, rt } = useUnistyles();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         headerBackButtonDisplayMode: 'minimal',
+        tabBarStyle: {
+          backgroundColor: theme.colors.background,
+        },
       }}>
       <Tabs.Screen
-        name="(tabs)/index"
+        name="index"
         options={{
           title: 'Mes listes',
           tabBarIcon: ({ focused }) => (
@@ -18,7 +24,7 @@ export default function ListsPagesLayout() {
         }}
       />
       <Tabs.Screen
-        name="(tabs)/create"
+        name="create"
         options={{
           title: 'Ajouter',
           tabBarIcon: ({ focused }) => (
