@@ -3,7 +3,8 @@ const sharedColors = {
   limedSpruce: '#38434D',
   cornflowerBlue: '#6366F1',
   astral: '#2E78B7',
-  white: "#FFF"
+  white: '#FFF',
+  crimson: '#DC143C',
 } as const;
 
 const sharedSpacing = {
@@ -11,8 +12,8 @@ const sharedSpacing = {
   md: 8,
   lg: 12,
   xl: 16,
-  "2xl": 24,
-  "3xl": 32,
+  '2xl': 24,
+  '3xl': 32,
 } as const;
 
 const sharedBorderRadius = {
@@ -21,7 +22,7 @@ const sharedBorderRadius = {
   md: 8,
   lg: 12,
   xl: 16,
-  "2xl": 24,
+  '2xl': 24,
   full: 9999,
 } as const;
 
@@ -68,7 +69,7 @@ export const lightTheme = {
   colors: {
     ...sharedColors,
     typography: '#000000',
-    background: '#FBFBFB',
+    background: '#FAFAFA',
     surface: '#ffffff',
     outline: '#e5e7eb',
     muted: '#6b7280',
