@@ -4,7 +4,7 @@ import { StyleSheet, type UnistylesVariants } from 'react-native-unistyles';
 type TextProps = RNTextProps & UnistylesVariants<typeof styles>;
 
 export function Text({
-  color = 'primary',
+  color = 'base',
   size = 'base',
   weight = 'medium',
   font = 'nunito',
