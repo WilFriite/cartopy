@@ -70,7 +70,7 @@ export const lightTheme = {
   colors: {
     ...sharedColors,
     typography: '#000000',
-    background: '#FAFAFA',
+    background: '#F6F6F6',
     surface: '#ffffff',
     outline: '#e5e7eb',
     muted: '#6b7280',
