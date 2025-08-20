@@ -42,9 +42,6 @@ export default function CreateListPage() {
 
     const form = useForm({
         defaultValues,
-        // validators: {
-        //     onChange: schema
-        // },
         onSubmit: async ({ formApi, value }) => {
             console.log(value);
             await saveUserMutation.mutateAsync(value)
@@ -60,8 +57,17 @@ export default function CreateListPage() {
         <VStack gap='lg'>
             <form.Field 
                 name="name"
+                asyncDebounceMs={300}
                 validators={{
                     onChange: schema.shape.name,
+                    onSubmitAsync: async ({ value, fieldApi }) => {
+                        const found = await db.query.lists.findFirst({
+                            where: (lists, { eq, like }) => like(sql`lower(${lists.name})`, value.toLowerCase())
+                        })
+                        
+                        if (found) return { message: "Ce nom de liste est déjà pris" }
+                        return null
+                    }
                 }}
             >
                 {(field) => (
