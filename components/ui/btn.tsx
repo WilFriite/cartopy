@@ -1,7 +1,7 @@
 import { createContext, forwardRef, useContext } from 'react';
-import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
+import { ActivityIndicator, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 import { Text } from './typography';
-import { StyleSheet, UnistylesVariants } from 'react-native-unistyles';
+import { StyleSheet, UnistylesVariants, useUnistyles } from 'react-native-unistyles';
 import { Icon } from './icon';
 
 /* Button container-related code */
@@ -17,21 +17,34 @@ export function useButtonVariant() {
   return context;
 }
 
-type BtnProps = TouchableOpacityProps & UnistylesVariants<typeof styles>;
+type BtnProps = TouchableOpacityProps &
+  UnistylesVariants<typeof styles> & {
+    isLoading?: boolean;
+  };
 
 export const Button = forwardRef<View, BtnProps>(
-  ({ children, variant = 'solid', ...props }, ref) => {
+  ({ children, variant = 'solid', isLoading = false, ...props }, ref) => {
     styles.useVariants({
       variant,
     });
+    const { theme } = useUnistyles();
     const contextValue = {
       variant,
     } satisfies ButtonVariantContextType;
 
+    const Component = isLoading ? (
+      <ActivityIndicator
+        size="small"
+        color={variant === 'outline' ? theme.colors.astral : theme.colors.white}
+      />
+    ) : (
+      children
+    );
+
     return (
       <ButtonVariantContext.Provider value={contextValue}>
         <TouchableOpacity ref={ref} {...props} style={[styles.button, props.style]}>
-          {children}
+          {Component}
         </TouchableOpacity>
       </ButtonVariantContext.Provider>
     );

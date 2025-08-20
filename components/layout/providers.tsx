@@ -1,6 +1,11 @@
 import { PropsWithChildren } from 'react';
 import { DbProvider } from './db-provider';
+import { QueryClientProvider } from './query-client-provider';
 
 export function Providers({ children }: PropsWithChildren) {
-  return <DbProvider>{children}</DbProvider>;
+  return (
+    <DbProvider>
+      <QueryClientProvider>{children}</QueryClientProvider>
+    </DbProvider>
+  );
 }

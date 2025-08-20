@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "cartopy",
+    "name": "Cartopy",
     "slug": "cartopy",
     "version": "1.0.0",
     "newArchEnabled": true,
@@ -11,11 +11,11 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "",
+          "backgroundColor": "#FAFAFA",
           "image": "./assets/images/icon-logo-2.png",
           "dark": {
             "image": "./assets/images/icon-logo-2.png",
-            "backgroundColor": "#000000"
+            "backgroundColor": "#1f1f1f"
           },
           "imageWidth": 200
         }
