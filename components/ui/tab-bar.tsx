@@ -81,7 +81,7 @@ export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) =>
             icon={options.tabBarIcon!({
               focused: isFocused,
               size: 20,
-              color: "",
+              color: '',
             })}
             key={route.name}
             onPress={onPress}
@@ -149,7 +149,7 @@ const TabBarButton = ({
       {...pressableProps}
       style={styles.container}>
       <Animated.View style={[animatedIconStyle]}>{icon}</Animated.View>
-      <Animated.Text style={[animatedTextStyle, styles.label(isFocused ? "astral" : "muted")]}>
+      <Animated.Text style={[animatedTextStyle, styles.label(isFocused ? 'astral' : 'muted')]}>
         {label}
       </Animated.Text>
     </Pressable>
@@ -187,10 +187,10 @@ const styles = StyleSheet.create((theme) => ({
     paddingVertical: theme.spacing.md,
     zIndex: 1,
   },
-  label: {
+  label: (textColor: keyof ThemeColors) => ({
     fontSize: theme.typography.fontSizes.xs,
     fontWeight: theme.typography.fontWeights.bold,
-    color: textColor
+    color: theme.colors[textColor],
   }),
   movingPill: {
     position: 'absolute',
