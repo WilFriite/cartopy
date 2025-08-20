@@ -8,6 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useEffect, useRef } from 'react';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import type { ThemeColors } from '~/theme';
 
 export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const { theme } = useUnistyles();
@@ -80,7 +81,7 @@ export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) =>
             icon={options.tabBarIcon!({
               focused: isFocused,
               size: 20,
-              color: isFocused ? theme.colors.astral : theme.colors.muted,
+              color: "",
             })}
             key={route.name}
             onPress={onPress}
@@ -110,8 +111,6 @@ const TabBarButton = ({
   routeName,
   ...pressableProps
 }: TabBarButtonProps) => {
-  const { theme } = useUnistyles();
-
   const focus = useSharedValue(isFocused ? 1 : 0);
   const press = useSharedValue(0);
 
@@ -143,10 +142,6 @@ const TabBarButton = ({
     };
   });
 
-  // Removed per-item pill; using a single moving pill at the parent level
-
-  const textColor = isFocused ? theme.colors.astral : theme.colors.muted;
-
   return (
     <Pressable
       onPressIn={onPressIn}
@@ -154,7 +149,7 @@ const TabBarButton = ({
       {...pressableProps}
       style={styles.container}>
       <Animated.View style={[animatedIconStyle]}>{icon}</Animated.View>
-      <Animated.Text style={[{ color: textColor }, animatedTextStyle, styles.label]}>
+      <Animated.Text style={[animatedTextStyle, styles.label(isFocused ? "astral" : "muted")]}>
         {label}
       </Animated.Text>
     </Pressable>
@@ -195,7 +190,8 @@ const styles = StyleSheet.create((theme) => ({
   label: {
     fontSize: theme.typography.fontSizes.xs,
     fontWeight: theme.typography.fontWeights.bold,
-  },
+    color: textColor
+  }),
   movingPill: {
     position: 'absolute',
     height: 50,

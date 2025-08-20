@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useId } from 'react';
 import { ViewProps } from 'react-native';
-import { StyleSheet, useUnistyles } from 'react-native-unistyles';
+import { StyleSheet } from 'react-native-unistyles';
 import { VStack, type StackProps } from './stack';
 import { Text } from './typography';
-import { ThemeSpacing } from '~/theme';
+import type { ThemeSpacing } from '~/theme';
 
 type CardContextValue = {
   id: string;
@@ -26,14 +26,9 @@ export type CardProps = ViewProps & {
 const CardRoot = ({ children, style, padding = 'md', ...props }: CardProps) => {
   const id = useId();
 
-  const { theme } = useUnistyles();
-
   return (
     <CardContext.Provider value={{ id }}>
-      <VStack
-        gap={padding}
-        style={[styles.card, style, { padding: theme.spacing[padding] }]}
-        {...props}>
+      <VStack gap={padding} style={[styles.card(padding), style]} {...props}>
         {children}
       </VStack>
     </CardContext.Provider>
@@ -95,7 +90,7 @@ export const Card = Object.assign(CardRoot, {
 }) as CardComponent;
 
 const styles = StyleSheet.create((theme) => ({
-  card: {
+  card: (padding: keyof ThemeSpacing) => ({
     backgroundColor: theme.colors.surface,
     borderRadius: theme.borderRadius.xl,
     borderCurve: 'continuous',
@@ -111,7 +106,8 @@ const styles = StyleSheet.create((theme) => ({
     shadowRadius: 3.84,
     marginVertical: theme.spacing.md,
     marginHorizontal: 'auto',
-  },
+    padding: theme.spacing[padding],
+  }),
   section: {
     gap: theme.spacing.sm,
   },
