@@ -24,12 +24,8 @@ export function Text({
   return <RNText {...props} style={[styles.text, style]} />;
 }
 
-export function ErrorText({ children }: PropsWithChildren) {
-  return (
-    <Text size="sm" color="error" weight="bold">
-      {children}
-    </Text>
-  );
+export function ErrorText(props: PropsWithChildren) {
+  return <Text size="sm" color="error" weight="bold" {...props} />;
 }
 
 const styles = StyleSheet.create((theme) => ({
