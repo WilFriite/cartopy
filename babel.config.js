@@ -11,6 +11,7 @@ module.exports = function (api) {
           autoProcessImports: ['~/components'],
         },
       ],
+      'react-native-worklets/plugin',
     ],
   };
 };
