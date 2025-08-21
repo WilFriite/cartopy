@@ -1,5 +1,5 @@
 import { View, Pressable, type PressableProps, type LayoutChangeEvent } from 'react-native';
-import { StyleSheet, useUnistyles } from 'react-native-unistyles';
+import { StyleSheet } from 'react-native-unistyles';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -11,7 +11,6 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import type { ThemeColors } from '~/theme';
 
 export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
-  const { theme } = useUnistyles();
   const itemLayouts = useRef<{ x: number; width: number }[]>([]);
   const pillLeft = useSharedValue(0);
   const pillWidth = useSharedValue(0);
