@@ -196,13 +196,7 @@ export default function EditTab() {
                 Articles actuels
               </Text>
               <View
-                style={{
-                  backgroundColor: '#f9fafb',
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: '#e5e7eb',
-                  padding: 16,
-                }}>
+                style={styles.itemsPreview}>
                 <Text size="base" color="muted">
                   {list.items}
                 </Text>
@@ -221,6 +215,13 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingBottom: rt.insets.bottom,
   },
   contentPadding: {
+    padding: 16,
+  },
+  itemsPreview: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: theme.colors.outline,
     padding: 16,
   },
 }));
