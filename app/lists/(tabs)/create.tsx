@@ -123,7 +123,7 @@ export default function CreateListPage() {
             selector={(state) => [state.canSubmit, state.isSubmitting]}
             children={([canSubmit, isSubmitting]) => (
               <Button
-                variant="solid"
+                action='normal'
                 isLoading={isSubmitting}
                 disabled={!canSubmit}
                 onPress={form.handleSubmit}>

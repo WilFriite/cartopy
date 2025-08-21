@@ -8,6 +8,7 @@ const sharedColors = {
 } as const;
 
 const sharedSpacing = {
+  none: 0,
   sm: 4,
   md: 8,
   lg: 12,
@@ -69,7 +70,7 @@ export const lightTheme = {
   colors: {
     ...sharedColors,
     typography: '#000000',
-    background: '#FAFAFA',
+    background: '#F6F6F6',
     surface: '#ffffff',
     outline: '#e5e7eb',
     muted: '#6b7280',

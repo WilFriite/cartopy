@@ -103,6 +103,7 @@ const styles = StyleSheet.create((theme) => ({
         nowrap: { flexWrap: 'nowrap' },
       },
       gap: {
+        none: { gap: theme.spacing.none },
         sm: { gap: theme.spacing.sm },
         md: { gap: theme.spacing.md },
         lg: { gap: theme.spacing.lg },

@@ -5,6 +5,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { Providers } from '~/components/layout/providers';
+import 'react-native-reanimated';
 
 SplashScreen.setOptions({
   duration: 1000,

@@ -78,7 +78,7 @@ const styles = StyleSheet.create((theme) => ({
           fontWeight: '100',
         },
         medium: {
-          fontWeight: '500',
+          fontWeight: '600',
         },
         bold: {
           fontWeight: '700',
