@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { FlatList, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native-unistyles';
-import { Button, ButtonIcon } from '~/components/ui/btn';
+import { Button, ButtonIcon, ButtonText } from '~/components/ui/btn';
 import { Card } from '~/components/ui/card';
 
 import { Container } from '~/components/ui/container';
@@ -14,6 +14,7 @@ import { lists, ListSelectType } from '~/db/schema';
 import { useDrizzle } from '~/hooks/use-drizzle';
 import { formatListItems } from '~/utils/format';
 import Animated from 'react-native-reanimated';
+import { Link } from 'expo-router';
 
 export default function DisplayListsPage() {
   const db = useDrizzle();
@@ -53,15 +54,28 @@ export default function DisplayListsPage() {
         <Text size="xl" align="center">
           Mes Listes
         </Text>
-        <Animated.ScrollView>
-          <FlatList
-            data={data}
-            numColumns={1}
-            scrollEnabled={false}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => renderItem(item)}
-          />
-        </Animated.ScrollView>
+          {
+            data.length < 0 ? (
+              <Animated.ScrollView style={{ flex: 1, height: '100%' }}>
+                <FlatList
+                  data={data}
+                  numColumns={1}
+                  scrollEnabled={false}
+                  keyExtractor={(item) => item.id.toString()}
+                  renderItem={({ item }) => renderItem(item)}
+                />
+              </Animated.ScrollView>
+            ) : (
+              <View style={styles.emptyList}>
+                <Text size="lg">Aucune liste n'existe pour le moment. 😕</Text>
+                <Link href="/lists/create" asChild>
+                  <Button>
+                    <ButtonIcon name="plus" />
+                    <ButtonText>Ajouter une liste</ButtonText>
+                  </Button>
+                </Link>
+              </View>
+          )}
       </Container>
     </GestureHandlerRootView>
   );
@@ -91,5 +105,11 @@ const styles = StyleSheet.create((theme) => ({
   card: {
     marginVertical: 0,
     borderRadius: theme.borderRadius.none,
+  },
+  emptyList: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: theme.spacing.md,
   },
 }));
