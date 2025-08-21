@@ -37,10 +37,6 @@ export default function Layout() {
           headerStyle: {
             backgroundColor: theme.colors.background,
           },
-          headerTitleStyle: {
-            color: theme.colors.typography,
-          },
-          headerTintColor: theme.colors.typography,
         }}
       />
     </Providers>
