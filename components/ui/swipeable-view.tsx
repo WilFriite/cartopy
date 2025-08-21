@@ -66,7 +66,7 @@ export const SwipeableView = ({
 }: PropsWithChildren<SwipeableListItemProps>) => {
   const segments = useSegments();
   const translateX = useSharedValue(0);
-
+  const startX = useSharedValue(0);
   const directionMultiplier = direction === 'right' ? 1 : -1;
 
   const resetGesture = Gesture.Tap()
@@ -77,27 +77,23 @@ export const SwipeableView = ({
     });
 
   const panGesture = Gesture.Pan()
+    .onBegin(() => {
+      startX.value = translateX.value;
+    })
     .onUpdate((event) => {
-      const targetTranslation = event.translationX * directionMultiplier;
-
-      // Limit the translation to the threshold, always in the direction of the swipe
-      if (targetTranslation > 0) {
-        translateX.value = Math.min(targetTranslation, threshold) * directionMultiplier;
-      }
+      const raw = startX.value + event.translationX;
+      const min = direction === 'right' ? 0 : -threshold;
+      const max = direction === 'right' ? threshold : 0;
+      // Clamp within allowed range so users can open or close by dragging back
+      const travelValue = Math.min(Math.max(raw, min), max);
+      translateX.value = withSpring(travelValue, { damping: 50, stiffness: 400 });
     })
     .onEnd((event) => {
-      const targetTranslation = event.translationX * directionMultiplier;
-
-      if (targetTranslation > threshold / 2) {
-        translateX.value = withTiming(threshold * directionMultiplier, {
-          duration: 200,
-        });
-      } else {
-        // Sinon, revenir à la position initiale
-        translateX.value = withTiming(0, {
-          duration: 200,
-        });
-      }
+      const progress = translateX.value * directionMultiplier;
+      const velocity = event.velocityX * directionMultiplier;
+      const shouldOpen = progress > threshold / 2 || velocity > 800;
+      const target = shouldOpen ? threshold * directionMultiplier : 0;
+      translateX.value = withSpring(target, { damping: 50, stiffness: 400 });
     });
 
   const animatedStyle = useAnimatedStyle(() => {
