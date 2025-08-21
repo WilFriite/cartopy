@@ -30,9 +30,18 @@ export default function DisplayListsPage() {
               <Button action="destructive" style={styles.buttonItem}>
                 <ButtonIcon name="trash" />
               </Button>
-              <Button style={styles.buttonItem}>
-                <ButtonIcon name="eye" />
-              </Button>
+              <Link
+                href={{
+                  pathname: '/lists/[id]',
+                  params: {
+                    id: item.id.toString(),
+                  },
+                }}
+                asChild>
+                <Button style={styles.buttonItem}>
+                  <ButtonIcon name="eye" />
+                </Button>
+              </Link>
             </HStack>
           </View>
         }>
@@ -54,28 +63,27 @@ export default function DisplayListsPage() {
         <Text size="xl" align="center">
           Mes Listes
         </Text>
-          {
-            data.length > 0 ? (
-              <Animated.ScrollView style={{ flex: 1, height: '100%' }}>
-                <FlatList
-                  data={data}
-                  numColumns={1}
-                  scrollEnabled={false}
-                  keyExtractor={(item) => item.id.toString()}
-                  renderItem={({ item }) => renderItem(item)}
-                />
-              </Animated.ScrollView>
-            ) : (
-              <View style={styles.emptyList}>
-                <Text size="lg">Aucune liste n'existe pour le moment. 😕</Text>
-                <Link href="/lists/create" asChild>
-                  <Button>
-                    <ButtonIcon name="plus" />
-                    <ButtonText>Ajouter une liste</ButtonText>
-                  </Button>
-                </Link>
-              </View>
-          )}
+        {data.length > 0 ? (
+          <Animated.ScrollView style={{ flex: 1, height: '100%' }}>
+            <FlatList
+              data={data}
+              numColumns={1}
+              scrollEnabled={false}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => renderItem(item)}
+            />
+          </Animated.ScrollView>
+        ) : (
+          <View style={styles.emptyList}>
+            <Text size="lg">Aucune liste n&apos;existe pour le moment. 😕</Text>
+            <Link href="/lists/create" asChild>
+              <Button>
+                <ButtonIcon name="plus" />
+                <ButtonText>Ajouter une liste</ButtonText>
+              </Button>
+            </Link>
+          </View>
+        )}
       </Container>
     </GestureHandlerRootView>
   );
