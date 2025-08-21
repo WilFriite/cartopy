@@ -117,6 +117,19 @@ export const SwipeableView = ({
 
   const hiddenPanSideStyle = direction === 'right' ? styles.hiddenPanLeft : styles.hiddenPanRight;
 
+  const hintBarStyle = useAnimatedStyle(() => {
+    const openness = Math.min(Math.abs(translateX.value) / threshold, 1);
+    const visibility = 1 - openness; // 1 at rest, 0 when fully swiped
+    return {
+      opacity: visibility,
+      transform: [
+        { translateY: '-50%' },
+        { scaleY: Math.max(visibility, 0) },
+        { translateX: translateX.value },
+      ],
+    };
+  });
+
   useEffect(() => {
     translateX.value = withTiming(0, { duration: 200 });
   }, [segments]);
@@ -129,8 +142,11 @@ export const SwipeableView = ({
       </Animated.View>
 
       {/* Main content with swipe gesture */}
+      <Animated.View style={[styles.hintBar(direction), hintBarStyle]} />
       <GestureDetector gesture={Gesture.Exclusive(panGesture, resetGesture)}>
-        <Animated.View style={[styles.mainContent, animatedStyle]}>{children}</Animated.View>
+        <Animated.View style={[styles.mainContent(direction), animatedStyle]}>
+          {children}
+        </Animated.View>
       </GestureDetector>
     </View>
   );
@@ -158,7 +174,19 @@ const styles = StyleSheet.create((theme) => ({
   hiddenPanRight: {
     right: 0,
   },
-  mainContent: {
-    zIndex: 20,
-  },
+  mainContent: (direction: SwipeDirection) => ({
+    paddingLeft: direction === 'right' ? theme.spacing.md : 0,
+    paddingRight: direction === 'right' ? 0 : theme.spacing.md,
+  }),
+  hintBar: (direction: SwipeDirection) => ({
+    position: 'absolute',
+    top: '50%',
+    left: direction === 'right' ? '2%' : '98%',
+    height: 30,
+    width: 2,
+    backgroundColor: theme.colors.azureRadiance,
+    zIndex: 10,
+    borderRadius: theme.borderRadius.full,
+    transform: [{ translateY: -15 }],
+  }),
 }));
