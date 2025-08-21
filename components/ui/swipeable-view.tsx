@@ -179,7 +179,7 @@ const styles = StyleSheet.create((theme) => ({
     top: '50%',
     left: direction === 'right' ? '2%' : '98%',
     height: 30,
-    width: 2,
+    width: 3,
     backgroundColor: theme.colors.azureRadiance,
     zIndex: 10,
     borderRadius: theme.borderRadius.full,
