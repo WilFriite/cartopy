@@ -2,7 +2,12 @@ import { useSegments } from 'expo-router';
 import React, { useEffect, type PropsWithChildren } from 'react';
 import { View, type ViewProps } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import { StyleSheet } from 'react-native-unistyles';
 
 /**
@@ -68,7 +73,7 @@ export const SwipeableView = ({
     .maxDuration(250)
     .numberOfTaps(1)
     .onEnd(() => {
-      translateX.value = withTiming(0, { duration: 200 });
+      translateX.value = withSpring(0, { damping: 50, stiffness: 400 });
     });
 
   const panGesture = Gesture.Pan()
