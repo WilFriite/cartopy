@@ -14,7 +14,6 @@ import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 import { formatListItems } from '~/utils/format';
 
-
 // Validation schemas
 const nameSchema = z
   .string()
@@ -34,7 +33,7 @@ export default function EditTab() {
     db.query.lists.findFirst({
       where: (lists, { eq }) => eq(lists.id, Number(id)),
     }),
-    [id],
+    [id]
   );
 
   // Update name mutation
@@ -76,7 +75,7 @@ export default function EditTab() {
   // Name form
   const nameForm = useForm({
     defaultValues: {
-      name: "mac rosbeat",
+      name: list?.name!,
     },
     onSubmit: async ({ value }) => {
       await updateNameMutation.mutateAsync(value.name);
@@ -90,120 +89,115 @@ export default function EditTab() {
     },
     onSubmit: async ({ value }) => {
       const formattedItems = formatListItems(value.items)
-        .map(item => item[0].toUpperCase() + item.slice(1))
+        .map((item) => item[0].toUpperCase() + item.slice(1))
         .join(', ');
       await updateItemsMutation.mutateAsync(formattedItems);
     },
   });
 
   return (
-      <ScrollView style={styles.container}>
-        <VStack style={styles.contentPadding}>
-          {/* List Name Edit Form */}
-          <View style={{ paddingVertical: 16 }}>
-            <nameForm.Field
-              name="name"
-              asyncDebounceMs={300}
-              validators={{
-                onChange: nameSchema,
-                onChangeAsync: async ({ value }) => {
-                  if (value === list?.name) return null; // Skip validation if same as current name
-                  const found = await db.query.lists.findFirst({
-                    where: (lists, { eq, like }) =>
-                      like(sql`lower(${lists.name})`, value.toLowerCase()),
-                  });
-                  if (found) return { message: 'Ce nom de liste est déjà pris' };
-                  return null;
-                },
-              }}>
-              {(field) => (
-                <VStack gap="sm">
-                  <Input
-                    label="Nom de la liste"
-                    value={field.state.value}
-                    onChangeText={field.handleChange}
-                    onBlur={field.handleBlur}
-                    placeholder="Nom de la liste"
-                    size="lg"
-                    isError={field.state.meta.errors.length > 0}
-                  />
-                  {field.state.meta.errors.length > 0 ? (
-                    <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
-                  ) : null}
-                </VStack>
-              )}
-            </nameForm.Field>
-            <nameForm.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <Button
-                  onPress={nameForm.handleSubmit}
-                  disabled={!canSubmit || isSubmitting}
-                  style={{ marginTop: 12 }}>
-                  <ButtonText>
-                    {isSubmitting ? 'Sauvegarde...' : 'Sauvegarder le nom'}
-                  </ButtonText>
-                </Button>
-              )}
-            />
-          </View>
+    <ScrollView style={styles.container}>
+      <VStack style={styles.contentPadding}>
+        {/* List Name Edit Form */}
+        <View style={{ paddingVertical: 16 }}>
+          <nameForm.Field
+            name="name"
+            asyncDebounceMs={300}
+            validators={{
+              onChange: nameSchema,
+              onChangeAsync: async ({ value }) => {
+                if (value === list?.name) return null; // Skip validation if same as current name
+                const found = await db.query.lists.findFirst({
+                  where: (lists, { eq, like }) =>
+                    like(sql`lower(${lists.name})`, value.toLowerCase()),
+                });
+                if (found) return { message: 'Ce nom de liste est déjà pris' };
+                return null;
+              },
+            }}>
+            {(field) => (
+              <VStack gap="sm">
+                <Input
+                  label="Nom de la liste"
+                  value={field.state.value}
+                  onChangeText={field.handleChange}
+                  onBlur={field.handleBlur}
+                  placeholder="Nom de la liste"
+                  size="lg"
+                  isError={field.state.meta.errors.length > 0}
+                />
+                {field.state.meta.errors.length > 0 ? (
+                  <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
+                ) : null}
+              </VStack>
+            )}
+          </nameForm.Field>
+          <nameForm.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+            {([canSubmit, isSubmitting]) => (
+              <Button
+                onPress={nameForm.handleSubmit}
+                disabled={!canSubmit || isSubmitting}
+                style={{ marginTop: 12 }}>
+                <ButtonText>{isSubmitting ? 'Sauvegarde...' : 'Sauvegarder le nom'}</ButtonText>
+              </Button>
+            )}
+          </nameForm.Subscribe>
+        </View>
 
-          {/* Items Edit Form */}
-          <View style={{ paddingVertical: 16 }}>
-            <itemsForm.Field
-              name="items"
-              validators={{
-                onChange: itemsSchema,
-              }}>
-              {(field) => (
-                <VStack gap="sm">
-                  <Textarea
-                    label="Articles"
-                    size="md"
-                    helperText="Séparés par des virgules… (ex: Pain, Lait, Œufs)"
-                    value={field.state.value || ""}
-                    onChangeText={field.handleChange}
-                    onBlur={field.handleBlur}
-                    isError={field.state.meta.errors.length > 0}
-                    style={{ minHeight: 100 }}
-                  />
-                  {field.state.meta.errors.length > 0 ? (
-                    <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
-                  ) : null}
-                </VStack>
-              )}
-            </itemsForm.Field>
-            <itemsForm.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <Button
-                  isLoading={isSubmitting}
-                  onPress={itemsForm.handleSubmit}
-                  disabled={!canSubmit || isSubmitting}
-                  style={{ marginTop: 12 }}>
-                  <ButtonText>
-                    {isSubmitting ? 'Sauvegarde...' : 'Sauvegarder les articles'}
-                  </ButtonText>
-                </Button>
-              )}
-            />
-          </View>
+        {/* Items Edit Form */}
+        <View style={{ paddingVertical: 16 }}>
+          <itemsForm.Field
+            name="items"
+            validators={{
+              onChange: itemsSchema,
+            }}>
+            {(field) => (
+              <VStack gap="sm">
+                <Textarea
+                  label="Articles"
+                  size="md"
+                  helperText="Séparés par des virgules… (ex: Pain, Lait, Œufs)"
+                  value={field.state.value || ''}
+                  onChangeText={field.handleChange}
+                  onBlur={field.handleBlur}
+                  isError={field.state.meta.errors.length > 0}
+                  style={{ minHeight: 100 }}
+                />
+                {field.state.meta.errors.length > 0 ? (
+                  <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
+                ) : null}
+              </VStack>
+            )}
+          </itemsForm.Field>
+          <itemsForm.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+            {([canSubmit, isSubmitting]) => (
+              <Button
+                isLoading={isSubmitting}
+                onPress={itemsForm.handleSubmit}
+                disabled={!canSubmit || isSubmitting}
+                style={{ marginTop: 12 }}>
+                <ButtonText>
+                  {isSubmitting ? 'Sauvegarde...' : 'Sauvegarder les articles'}
+                </ButtonText>
+              </Button>
+            )}
+          </itemsForm.Subscribe>
+        </View>
 
-          {/* Current Items Preview */}
-          {list?.items && (
-            <View style={{ paddingVertical: 16 }}>
-              <Text size="lg" weight="bold" style={{ marginBottom: 16 }}>
-                Articles actuels
+        {/* Current Items Preview */}
+        {list?.items && (
+          <View style={{ paddingVertical: 16 }}>
+            <Text size="lg" weight="bold" style={{ marginBottom: 16 }}>
+              Articles actuels
+            </Text>
+            <View style={styles.itemsPreview}>
+              <Text size="base" color="muted">
+                {list.items}
               </Text>
-              <View
-                style={styles.itemsPreview}>
-                <Text size="base" color="muted">
-                  {list.items}
-                </Text>
-              </View>
             </View>
-          )}
-        </VStack>
+          </View>
+        )}
+      </VStack>
     </ScrollView>
   );
 }

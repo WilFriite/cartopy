@@ -36,12 +36,12 @@ export default function CreateListPage() {
   const saveUserMutation = useMutation({
     mutationFn: async (value: ListInsertType) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      const formattedItems =  formatListItems(value.items)
-      .map(item => item[0].toUpperCase() + item.slice(1))
-      .join(', ')
+      const formattedItems = formatListItems(value.items)
+        .map((item) => item[0].toUpperCase() + item.slice(1))
+        .join(', ');
       await db.insert(lists).values({
         ...value,
-        items: formattedItems
+        items: formattedItems,
       });
     },
   });
@@ -98,9 +98,8 @@ export default function CreateListPage() {
           <form.Field
             name="items"
             validators={{
-                    onChange: schema.shape.items
-                }}
-            >
+              onChange: schema.shape.items,
+            }}>
             {(field) => (
               <VStack>
                 <Textarea
@@ -108,7 +107,7 @@ export default function CreateListPage() {
                   size="md"
                   helperText="Séparés par des virgules…"
                   id={field.name}
-                            value={field.state.value || ""}
+                  value={field.state.value || ''}
                   onBlur={field.handleBlur}
                   onChangeText={field.handleChange}
                   isError={field.state.meta.errors.length > 0}
@@ -119,18 +118,17 @@ export default function CreateListPage() {
               </VStack>
             )}
           </form.Field>
-          <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => (
+          <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+            {([canSubmit, isSubmitting]) => (
               <Button
-                action='normal'
+                action="normal"
                 isLoading={isSubmitting}
                 disabled={!canSubmit}
                 onPress={form.handleSubmit}>
                 <ButtonText>Créer</ButtonText>
               </Button>
             )}
-          />
+          </form.Subscribe>
         </VStack>
       </Container>
     </>
