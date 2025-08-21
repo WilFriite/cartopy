@@ -159,13 +159,13 @@ const styles = StyleSheet.create((theme) => ({
   tabbar: {
     position: 'absolute',
     bottom: theme.spacing['3xl'],
-    right: 0,
+    left: '50%',
     flexDirection: 'row',
-    width: '55%',
+    width: '90%',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: theme.colors.surface,
-    padding: theme.spacing.lg,
+    padding: theme.spacing.md,
     borderRadius: theme.borderRadius.full,
     borderCurve: 'continuous',
     shadowColor: '#000',
@@ -174,7 +174,7 @@ const styles = StyleSheet.create((theme) => ({
     shadowOpacity: 0.1,
     transform: [
       {
-        translateX: theme.spacing['2xl'] * -1,
+        translateX: '-50%',
       },
     ],
   },
@@ -183,7 +183,7 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     gap: theme.spacing.md,
-    paddingVertical: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
     zIndex: 1,
   },
   label: (textColor: keyof ThemeColors) => ({
