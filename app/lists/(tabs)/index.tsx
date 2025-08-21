@@ -55,7 +55,7 @@ export default function DisplayListsPage() {
           Mes Listes
         </Text>
           {
-            data.length < 0 ? (
+            data.length > 0 ? (
               <Animated.ScrollView style={{ flex: 1, height: '100%' }}>
                 <FlatList
                   data={data}
