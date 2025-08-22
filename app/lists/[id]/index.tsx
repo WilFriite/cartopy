@@ -54,7 +54,23 @@ export default function ViewTab() {
   });
 
   // Parse items from JSON string or use empty array
-  const lastPerformedAt = list?.lastPerformedAt ? new Date(list.lastPerformedAt) : null;
+  const lastPerformedBase = DateTime.fromISO(list?.lastPerformedAt || '');
+
+  const lastPerformedAt = lastPerformedBase.isValid
+    ? lastPerformedBase.toLocaleString({
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : null;
+
+  const createdAt = DateTime.fromJSDate(new Date(list?.createdAt || ''))
+    .setLocale('fr')
+    .toLocaleString({
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
 
   return (
     <>
@@ -66,19 +82,9 @@ export default function ViewTab() {
             <Text size="lg" weight="bold" style={styles.sectionTitle}>
               Dernière utilisation
             </Text>
-            {lastPerformedAt ? (
-              <Text size="base" color="muted">
-                {DateTime.fromJSDate(lastPerformedAt).toLocaleString({
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </Text>
-            ) : (
-              <Text size="base" color="muted">
-                Cette liste n&apos;a jamais été utilisée
-              </Text>
-            )}
+            <Text size="base" color="muted">
+              {lastPerformedAt ? lastPerformedAt : "Cette liste n'a jamais été utilisée"}
+            </Text>
 
             <Button
               onPress={() => markAsPerformedMutation.mutate()}
@@ -149,14 +155,7 @@ export default function ViewTab() {
           {/* Created Date */}
           <View style={styles.sectionContainer}>
             <Text size="sm" color="muted">
-              Créée le{' '}
-              {DateTime.fromJSDate(new Date(list?.createdAt || ''))
-                .setLocale('fr')
-                .toLocaleString({
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+              Créée le {createdAt}
             </Text>
           </View>
         </SafeAreaView>
