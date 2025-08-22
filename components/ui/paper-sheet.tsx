@@ -4,20 +4,19 @@ import { View, ScrollView, LayoutChangeEvent } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
 type Props = {
-  lineSpacing?: number;
   showMargin?: boolean;
   marginWidth?: number;
   containerHeight?: number; // Optional explicit height, otherwise will be calculated from layout
 };
 
 export function PaperUI({
-  lineSpacing = 24,
   showMargin = true,
   marginWidth = 40,
   containerHeight,
   children,
 }: PropsWithChildren<Props>) {
   const [calculatedLines, setCalculatedLines] = useState(0);
+  const lineSpacing = 24;
 
   // Calculate number of lines based on container height
   const handleContainerLayout = (event: LayoutChangeEvent) => {
@@ -34,7 +33,7 @@ export function PaperUI({
       const calculatedLinesCount = Math.floor(usableHeight / lineSpacing);
       setCalculatedLines(Math.max(1, calculatedLinesCount));
     }
-  }, [containerHeight, lineSpacing]);
+  }, [containerHeight]);
 
   const finalNumberOfLines = calculatedLines;
 
@@ -53,14 +52,12 @@ export function PaperUI({
       {/* Horizontal lines background */}
 
       {/* Content area */}
-      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-        <View style={styles.linesContainer}>{renderLines()}</View>
-        <View style={styles.contentArea}>
-          <View style={[styles.itemsContainer, { marginLeft: showMargin ? marginWidth + 20 : 20 }]}>
-            {children}
-          </View>
+      <View style={styles.linesContainer}>{renderLines()}</View>
+      <View style={styles.contentArea}>
+        <View style={[styles.itemsContainer, { marginLeft: showMargin ? marginWidth + 20 : 20 }]}>
+          {children}
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 }
@@ -69,6 +66,8 @@ const styles = StyleSheet.create((theme) => ({
   paperContainer: {
     backgroundColor: theme.colors.surface,
     borderRadius: theme.borderRadius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.outline,
     flex: 1,
     overflow: 'hidden',
     position: 'relative',
@@ -79,7 +78,7 @@ const styles = StyleSheet.create((theme) => ({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 3,
+    elevation: 5,
     margin: theme.spacing.xl,
   },
   marginLine: {
