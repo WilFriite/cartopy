@@ -1,5 +1,5 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { View, ScrollView, Alert } from 'react-native';
+import { View, ScrollView, Alert, FlatList } from 'react-native';
 import { Text } from '~/components/ui/typography';
 import { Button, ButtonText } from '~/components/ui/btn';
 import { useDrizzle } from '~/hooks/use-drizzle';
@@ -125,34 +125,16 @@ export default function ViewTab() {
                   <CheckableItemsList items={it} />
                 </PaperUI>
               ) : (
-                <VStack gap="md">
-                  {it.map((item) => (
-                    <View
-                      key={item.id}
-                      style={[styles.itemCard, item.completed && styles.itemCardCompleted]}>
-                      <View style={styles.itemContent}>
-                        <View
-                          style={[
-                            styles.checkbox,
-                            item.completed ? styles.checkboxChecked : styles.checkboxUnchecked,
-                          ]}>
-                          {item.completed && (
-                            <Text size="xs" color="white" weight="bold">
-                              ✓
-                            </Text>
-                          )}
-                        </View>
-                        <Text
-                          size="base"
-                          weight="medium"
-                          style={{
-                            textDecorationLine: item.completed ? 'line-through' : 'none',
-                          }}>
-                          {item.name}
-                        </Text>
+                <VStack style={{ flex: 1 }}>
+                  <FlatList
+                    data={it}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({ item }) => (
+                      <View style={styles.itemCard}>
+                        <Text>{item.name}</Text>
                       </View>
-                    </View>
-                  ))}
+                    )}
+                  />
                 </VStack>
               )
             ) : (
@@ -191,16 +173,16 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   contentPadding: {
     flex: 1,
-    paddingHorizontal: 16,
+    paddingHorizontal: theme.spacing.xl,
   },
   sectionContainer: {
-    paddingVertical: 16,
+    paddingVertical: theme.spacing.xl,
   },
   sectionTitle: {
-    marginBottom: 8,
+    marginBottom: theme.spacing.md,
   },
   markAsUsedButton: {
-    marginTop: 12,
+    marginTop: theme.spacing.lg,
   },
   itemsHeader: {
     flexDirection: 'row',
@@ -212,18 +194,18 @@ const styles = StyleSheet.create((theme, rt) => ({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: theme.spacing.lg,
   },
   progressContainer: {
     flex: 1,
     alignItems: 'center',
-    gap: 8,
+    gap: theme.spacing.md,
   },
   progressBar: {
     width: '100%',
-    height: 8,
+    height: theme.spacing.md,
     backgroundColor: theme.colors.outline,
-    borderRadius: 4,
+    borderRadius: theme.borderRadius.sm,
     overflow: 'hidden',
   },
   progressFill: (width: number) => ({
@@ -232,9 +214,10 @@ const styles = StyleSheet.create((theme, rt) => ({
     backgroundColor: theme.colors.astral,
   }),
   itemCard: {
-    padding: 16,
+    marginBottom: theme.spacing.md,
+    padding: theme.spacing.xl,
     backgroundColor: theme.colors.surface,
-    borderRadius: 8,
+    borderRadius: theme.borderRadius.md,
     borderWidth: 1,
     borderColor: theme.colors.outline,
     shadowColor: theme.colors.typography,
@@ -243,46 +226,27 @@ const styles = StyleSheet.create((theme, rt) => ({
     shadowRadius: 2,
     elevation: 2,
   },
-  itemCardCompleted: {
-    opacity: 0.6,
-  },
   itemContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxUnchecked: {
-    borderColor: theme.colors.outline,
-    backgroundColor: 'transparent',
-  },
-  checkboxChecked: {
-    borderColor: theme.colors.astral,
-    backgroundColor: theme.colors.astral,
+    gap: theme.spacing.md,
   },
   itemDetails: {
-    marginTop: 4,
-    marginLeft: 28,
+    marginTop: theme.spacing.sm,
+    marginLeft: theme.spacing['2xl'],
   },
   emptyStateContainer: {
-    padding: 24,
+    padding: theme.spacing['2xl'],
     backgroundColor: theme.colors.surface,
-    borderRadius: 8,
+    borderRadius: theme.borderRadius.md,
     borderWidth: 1,
     borderColor: theme.colors.outline,
     borderStyle: 'dashed',
   },
   toggleButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    minHeight: 36,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,
+    minHeight: theme.spacing['3xl'],
     flex: 1,
   },
 }));
