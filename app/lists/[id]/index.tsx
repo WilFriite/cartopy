@@ -129,6 +129,7 @@ export default function ViewTab() {
           </View>
 
           <EditBottomSheet
+            listId={Number(id)}
             bottomSheetRef={bottomSheetRef}
             onClose={() => setShowPaperSheet(false)}
             it={it}
