@@ -134,6 +134,7 @@ const styles = StyleSheet.create((theme) => ({
         action: 'normal',
         styles: {
           borderColor: theme.colors.astral,
+          backgroundColor: theme.colors.surface,
         },
       },
       {
