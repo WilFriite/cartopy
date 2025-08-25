@@ -71,7 +71,7 @@ export default function ListDetailsLayout() {
             name="index"
             initialParams={{ id }}
             options={{
-              title: 'Voir',
+              title: 'Détails',
               tabBarIcon: ({ focused }) => (
                 <LucIcon as={Eye} size={20} color={focused ? 'astral' : 'muted'} />
               ),
@@ -81,7 +81,7 @@ export default function ListDetailsLayout() {
             name="edit"
             initialParams={{ id }}
             options={{
-              title: 'Modifier',
+              title: 'Modification',
               tabBarIcon: ({ focused }) => (
                 <LucIcon as={Edit} size={20} color={focused ? 'astral' : 'muted'} />
               ),

@@ -13,7 +13,8 @@ import { StyleSheet } from 'react-native-unistyles';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 import { formatListItems } from '~/utils/format';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Divider } from '~/components/ui/divider';
 
 // Validation schemas
 const nameSchema = z
@@ -29,6 +30,7 @@ const itemsSchema = z
 export default function EditTab() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const db = useDrizzle();
+  const router = useRouter();
 
   const { data: list } = useLiveQuery(
     db.query.lists.findFirst({
@@ -73,6 +75,19 @@ export default function EditTab() {
     },
   });
 
+  const deleteListMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return db.delete(lists).where(eq(lists.id, id)).run();
+    },
+    onSuccess: () => {
+      Alert.alert('Succès', 'Liste supprimée avec succès');
+      router.replace('/lists');
+    },
+    onError: (error) => {
+      Alert.alert('Erreur', 'Erreur lors de la suppression de la liste');
+      console.error('Delete list error:', error);
+    },
+  });
   // Name form
   const nameForm = useForm({
     defaultValues: {
@@ -96,108 +111,125 @@ export default function EditTab() {
     },
   });
 
+  const handleDeleteList = () => {
+    Alert.alert(
+      `Supprimer la liste "${list?.name}"`,
+      'Cette action est irréversible. Êtes-vous sûr de vouloir supprimer la liste ?',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Supprimer',
+          style: 'destructive',
+          onPress: () => deleteListMutation.mutate(Number(id)),
+        },
+      ]
+    );
+  };
+
   return (
     <ScrollView style={styles.container}>
       <VStack style={styles.contentPadding}>
-        {/* List Name Edit Form */}
-        <View style={{ paddingVertical: 16 }}>
-          <nameForm.Field
-            name="name"
-            asyncDebounceMs={300}
-            validators={{
-              onChange: nameSchema,
-              onChangeAsync: async ({ value }) => {
-                if (value === list?.name) return null; // Skip validation if same as current name
-                const found = await db.query.lists.findFirst({
-                  where: (lists, { eq, like }) =>
-                    like(sql`lower(${lists.name})`, value.toLowerCase()),
-                });
-                if (found) return { message: 'Ce nom de liste est déjà pris' };
-                return null;
-              },
-            }}>
-            {(field) => (
-              <VStack gap="sm">
-                <Input
-                  label="Nom de la liste"
-                  value={field.state.value}
-                  onChangeText={field.handleChange}
-                  onBlur={field.handleBlur}
-                  placeholder="Nom de la liste"
-                  size="lg"
-                  isError={field.state.meta.errors.length > 0}
-                />
-                {field.state.meta.errors.length > 0 ? (
-                  <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
-                ) : null}
-              </VStack>
-            )}
-          </nameForm.Field>
-          <nameForm.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-            {([canSubmit, isSubmitting]) => (
-              <Button
-                onPress={nameForm.handleSubmit}
-                disabled={!canSubmit || isSubmitting}
-                style={{ marginTop: 12 }}>
-                <ButtonText>{isSubmitting ? 'Sauvegarde...' : 'Sauvegarder le nom'}</ButtonText>
-              </Button>
-            )}
-          </nameForm.Subscribe>
-        </View>
-
-        {/* Items Edit Form */}
-        <View style={{ paddingVertical: 16 }}>
-          <itemsForm.Field
-            name="items"
-            validators={{
-              onChange: itemsSchema,
-            }}>
-            {(field) => (
-              <VStack gap="sm">
-                <Textarea
-                  label="Articles"
-                  size="md"
-                  helperText="Séparés par des virgules… (ex: Pain, Lait, Œufs)"
-                  value={field.state.value || ''}
-                  onChangeText={field.handleChange}
-                  onBlur={field.handleBlur}
-                  isError={field.state.meta.errors.length > 0}
-                  style={{ minHeight: 100 }}
-                />
-                {field.state.meta.errors.length > 0 ? (
-                  <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
-                ) : null}
-              </VStack>
-            )}
-          </itemsForm.Field>
-          <itemsForm.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-            {([canSubmit, isSubmitting]) => (
-              <Button
-                isLoading={isSubmitting}
-                onPress={itemsForm.handleSubmit}
-                disabled={!canSubmit || isSubmitting}
-                style={{ marginTop: 12 }}>
-                <ButtonText>
-                  {isSubmitting ? 'Sauvegarde...' : 'Sauvegarder les articles'}
-                </ButtonText>
-              </Button>
-            )}
-          </itemsForm.Subscribe>
-        </View>
-
-        {/* Current Items Preview */}
-        {list?.items && (
-          <View style={{ paddingVertical: 16 }}>
-            <Text size="lg" weight="bold" style={{ marginBottom: 16 }}>
-              Articles actuels
-            </Text>
-            <View style={styles.itemsPreview}>
-              <Text size="base" color="muted">
-                {list.items}
-              </Text>
-            </View>
+        <VStack gap="lg">
+          <Text size="lg" weight="bold" style={{ marginBottom: 16 }}>
+            Édition de la liste
+          </Text>
+          {/* List Name Edit Form */}
+          <View>
+            <nameForm.Field
+              name="name"
+              asyncDebounceMs={300}
+              validators={{
+                onChange: nameSchema,
+                onChangeAsync: async ({ value }) => {
+                  if (value === list?.name) return null; // Skip validation if same as current name
+                  const found = await db.query.lists.findFirst({
+                    where: (lists, { eq, like }) =>
+                      like(sql`lower(${lists.name})`, value.toLowerCase()),
+                  });
+                  if (found) return { message: 'Ce nom de liste est déjà pris' };
+                  return null;
+                },
+              }}>
+              {(field) => (
+                <VStack gap="sm">
+                  <Input
+                    label="Nom de la liste"
+                    value={field.state.value}
+                    onChangeText={field.handleChange}
+                    onBlur={field.handleBlur}
+                    placeholder="Nom de la liste"
+                    size="lg"
+                    isError={field.state.meta.errors.length > 0}
+                  />
+                  {field.state.meta.errors.length > 0 ? (
+                    <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
+                  ) : null}
+                </VStack>
+              )}
+            </nameForm.Field>
+            <nameForm.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+              {([canSubmit, isSubmitting]) => (
+                <Button
+                  onPress={nameForm.handleSubmit}
+                  disabled={!canSubmit || isSubmitting}
+                  style={{ marginTop: 12 }}>
+                  <ButtonText>{isSubmitting ? 'Sauvegarde...' : 'Sauvegarder le nom'}</ButtonText>
+                </Button>
+              )}
+            </nameForm.Subscribe>
           </View>
-        )}
+
+          <Divider spacing="lg" width={200} style={{ alignSelf: 'center' }} />
+
+          {/* Items Edit Form */}
+          <View>
+            <itemsForm.Field
+              name="items"
+              validators={{
+                onChange: itemsSchema,
+              }}>
+              {(field) => (
+                <VStack gap="sm">
+                  <Textarea
+                    label="Articles"
+                    size="md"
+                    helperText="Séparés par des virgules… (ex: Pain, Lait, Œufs)"
+                    value={field.state.value || ''}
+                    onChangeText={field.handleChange}
+                    onBlur={field.handleBlur}
+                    isError={field.state.meta.errors.length > 0}
+                    style={{ minHeight: 100 }}
+                  />
+                  {field.state.meta.errors.length > 0 ? (
+                    <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
+                  ) : null}
+                </VStack>
+              )}
+            </itemsForm.Field>
+            <itemsForm.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+              {([canSubmit, isSubmitting]) => (
+                <Button
+                  isLoading={isSubmitting}
+                  onPress={itemsForm.handleSubmit}
+                  disabled={!canSubmit || isSubmitting}
+                  style={{ marginTop: 12 }}>
+                  <ButtonText>
+                    {isSubmitting ? 'Sauvegarde...' : 'Sauvegarder les articles'}
+                  </ButtonText>
+                </Button>
+              )}
+            </itemsForm.Subscribe>
+          </View>
+        </VStack>
+        <Divider spacing="lg" />
+        <VStack gap="md">
+          <Text size="lg" weight="bold" style={{ marginBottom: 16 }}>
+            Suppression de la liste
+          </Text>
+          <Button action="destructive" onPress={handleDeleteList}>
+            <ButtonText>Supprimer la liste</ButtonText>
+          </Button>
+        </VStack>
       </VStack>
     </ScrollView>
   );

@@ -33,7 +33,7 @@ export default function ViewTab() {
     completed: false,
   }));
 
-  const lastPerformedBase = DateTime.fromISO(list?.lastPerformedAt || '');
+  const lastPerformedBase = DateTime.fromISO(list?.lastPerformedAt || '').setLocale('fr');
 
   const lastPerformedAt = lastPerformedBase.isValid
     ? lastPerformedBase.toLocaleString({
@@ -56,76 +56,73 @@ export default function ViewTab() {
   };
 
   return (
-    <>
-      <Stack.Screen options={{ headerTitle: list?.name }} />
-      <GestureHandlerRootView style={styles.container}>
-        <SafeAreaView edges={['left', 'right']} style={styles.contentPadding}>
-          {/* Last Performed Section */}
-          <View style={styles.sectionContainer}>
-            <Text size="lg" weight="bold" style={styles.sectionTitle}>
-              Dernière utilisation
-            </Text>
-            <Text size="base" color="muted">
-              {lastPerformedAt ? lastPerformedAt : "Cette liste n'a jamais été utilisée"}
-            </Text>
-          </View>
+    <GestureHandlerRootView style={styles.container}>
+      <SafeAreaView edges={['left', 'right']} style={styles.contentPadding}>
+        {/* Last Performed Section */}
+        <View style={styles.sectionContainer}>
+          <Text size="lg" weight="bold" style={styles.sectionTitle}>
+            Dernière utilisation
+          </Text>
+          <Text size="base" color="muted">
+            {lastPerformedAt ? lastPerformedAt : "Cette liste n'a jamais été utilisée"}
+          </Text>
+        </View>
 
-          {/* Items Section */}
-          <VStack gap="none" style={[styles.sectionContainer, { flex: 1 }]}>
-            <View style={styles.itemsHeader}>
-              <View style={styles.headerControls}>
-                {it.length > 0 ? (
-                  <HStack>
-                    <Text size="base" color="muted" align="center">
-                      {it.length} articles à acheter.
-                    </Text>
-                    <Button onPress={handleBottomSheetOpen} outlined style={styles.toggleButton}>
-                      <ButtonText>It&apos;s grocery timee! 🛒</ButtonText>
-                    </Button>
-                  </HStack>
-                ) : null}
-              </View>
+        {/* Items Section */}
+        <VStack gap="none" style={[styles.sectionContainer, { flex: 1 }]}>
+          <View style={styles.itemsHeader}>
+            <View style={styles.headerControls}>
+              {it.length > 0 ? (
+                <HStack>
+                  <Text size="base" color="muted" align="center">
+                    {it.length} articles à acheter.
+                  </Text>
+                  <Button onPress={handleBottomSheetOpen} outlined style={styles.toggleButton}>
+                    <ButtonText>It&apos;s grocery timee! 🛒</ButtonText>
+                  </Button>
+                </HStack>
+              ) : null}
             </View>
-
-            {it.length > 0 ? (
-              <VStack style={{ flex: 1 }}>
-                <FlatList
-                  data={it}
-                  keyExtractor={(item) => item.id.toString()}
-                  renderItem={({ item }) => (
-                    <View style={styles.itemCard}>
-                      <Text>{item.name}</Text>
-                    </View>
-                  )}
-                />
-              </VStack>
-            ) : (
-              <View style={styles.emptyStateContainer}>
-                <Text size="lg" weight="bold" color="muted" align="center">
-                  Aucun article dans cette liste.
-                </Text>
-                <Text size="sm" color="muted" align="center">
-                  Vous pouvez en ajouter dans l&apos;onglet{' '}
-                  <Text size="sm" weight="bold" color="muted" align="center">
-                    &quot;Modifier&quot;
-                  </Text>{' '}
-                  juste à côté.
-                </Text>
-              </View>
-            )}
-          </VStack>
-
-          {/* Created Date */}
-          <View style={styles.sectionContainer}>
-            <Text size="sm" color="muted">
-              Créée le {createdAt}
-            </Text>
           </View>
 
-          <EditBottomSheet listId={Number(id)} bottomSheetRef={bottomSheetRef} it={it} />
-        </SafeAreaView>
-      </GestureHandlerRootView>
-    </>
+          {it.length > 0 ? (
+            <VStack style={{ flex: 1 }}>
+              <FlatList
+                data={it}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.itemCard}>
+                    <Text>{item.name}</Text>
+                  </View>
+                )}
+              />
+            </VStack>
+          ) : (
+            <View style={styles.emptyStateContainer}>
+              <Text size="lg" weight="bold" color="muted" align="center">
+                Aucun article dans cette liste.
+              </Text>
+              <Text size="sm" color="muted" align="center">
+                Vous pouvez en ajouter dans l&apos;onglet{' '}
+                <Text size="sm" weight="bold" color="muted" align="center">
+                  &quot;Modifier&quot;
+                </Text>{' '}
+                juste à côté.
+              </Text>
+            </View>
+          )}
+        </VStack>
+
+        {/* Created Date */}
+        <View style={styles.sectionContainer}>
+          <Text size="sm" color="muted">
+            Créée le {createdAt}
+          </Text>
+        </View>
+
+        <EditBottomSheet listId={Number(id)} bottomSheetRef={bottomSheetRef} it={it} />
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 
