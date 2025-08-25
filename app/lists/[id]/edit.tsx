@@ -13,6 +13,7 @@ import { StyleSheet } from 'react-native-unistyles';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 import { formatListItems } from '~/utils/format';
+import { useLocalSearchParams } from 'expo-router';
 
 // Validation schemas
 const nameSchema = z
@@ -26,7 +27,7 @@ const itemsSchema = z
   .regex(itemsRegex, 'Use letters, numbers, spaces, and ", " as the only separator');
 
 export default function EditTab() {
-  const id = 2;
+  const { id } = useLocalSearchParams<{ id: string }>();
   const db = useDrizzle();
 
   const { data: list } = useLiveQuery(

@@ -27,6 +27,10 @@ export default function ListDetailsLayout() {
   const { data: list } = useLiveQuery(
     db.query.lists.findFirst({
       where: (lists, { eq }) => eq(lists.id, parseInt(id!)),
+      columns: {
+        id: true,
+        name: true,
+      },
     }),
     [id]
   );
@@ -65,6 +69,7 @@ export default function ListDetailsLayout() {
         <MaterialTopTabs.Protected guard={Boolean(list)}>
           <MaterialTopTabs.Screen
             name="index"
+            initialParams={{ id }}
             options={{
               title: 'Voir',
               tabBarIcon: ({ focused }) => (
@@ -74,6 +79,7 @@ export default function ListDetailsLayout() {
           />
           <MaterialTopTabs.Screen
             name="edit"
+            initialParams={{ id }}
             options={{
               title: 'Modifier',
               tabBarIcon: ({ focused }) => (
