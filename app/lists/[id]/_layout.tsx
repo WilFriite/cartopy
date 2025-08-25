@@ -1,20 +1,22 @@
-import { createMaterialTopTabNavigator, MaterialTopTabNavigationEventMap, MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
+import {
+  createMaterialTopTabNavigator,
+  MaterialTopTabNavigationEventMap,
+  MaterialTopTabNavigationOptions,
+} from '@react-navigation/material-top-tabs';
 import { Link, Stack, useLocalSearchParams, withLayoutContext } from 'expo-router';
 import { Icon } from '~/components/ui/icon';
 import { ParamListBase, TabNavigationState } from '@react-navigation/native';
 import { useUnistyles } from 'react-native-unistyles';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useDrizzle } from '~/hooks/use-drizzle';
-import { HStack } from '~/components/ui/stack';
-import { Text } from '~/components/ui/typography';
 
 const { Navigator } = createMaterialTopTabNavigator();
 
 const MaterialTopTabs = withLayoutContext<
-    MaterialTopTabNavigationOptions,
-    typeof Navigator,
-    TabNavigationState<ParamListBase>,
-    MaterialTopTabNavigationEventMap
+  MaterialTopTabNavigationOptions,
+  typeof Navigator,
+  TabNavigationState<ParamListBase>,
+  MaterialTopTabNavigationEventMap
 >(Navigator);
 
 export default function ListDetailsLayout() {
@@ -25,26 +27,25 @@ export default function ListDetailsLayout() {
     db.query.lists.findFirst({
       where: (lists, { eq }) => eq(lists.id, parseInt(id!)),
     }),
-    [id],
+    [id]
   );
 
   return (
     <>
-    <Stack.Screen options={{ 
-      title: list?.name,
-      headerStyle: {
-        backgroundColor: theme.colors.background,
-      },
-      headerLeft: () => (
-        <Link href={'/lists'} asChild>
-          <HStack gap="sm" align="center">
-            <Icon name="arrow-circle-left" size={16} color="muted" />
-            <Text size="sm" color="muted">Retour</Text>
-          </HStack>
-        </Link>
-      ),
-      headerTintColor: theme.colors.astral,
-    }} />
+      <Stack.Screen
+        options={{
+          title: list?.name,
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerLeft: () => (
+            <Link href={'/lists'} asChild>
+              <Icon name="arrow-circle-left" size={20} color="muted" />
+            </Link>
+          ),
+          headerTintColor: theme.colors.astral,
+        }}
+      />
       <MaterialTopTabs
         screenOptions={{
           tabBarActiveTintColor: theme.colors.astral,
@@ -59,18 +60,27 @@ export default function ListDetailsLayout() {
             fontWeight: '600',
             textTransform: 'none',
           },
-        }}
-        >
-          <MaterialTopTabs.Protected guard={Boolean(list)}>
-            <MaterialTopTabs.Screen name="index" options={{ 
-              title: 'Voir', 
-              tabBarIcon: ({ focused }) => <Icon name="eye" size={20} color={focused ? 'astral' : 'muted'} />,
-              }} />
-            <MaterialTopTabs.Screen name="edit" options={{ 
-              title: 'Modifier', 
-              tabBarIcon: ({ focused }) => <Icon name="edit" size={20} color={focused ? 'astral' : 'muted'} />,
-              }} />
-          </MaterialTopTabs.Protected>
+        }}>
+        <MaterialTopTabs.Protected guard={Boolean(list)}>
+          <MaterialTopTabs.Screen
+            name="index"
+            options={{
+              title: 'Voir',
+              tabBarIcon: ({ focused }) => (
+                <Icon name="eye" size={20} color={focused ? 'astral' : 'muted'} />
+              ),
+            }}
+          />
+          <MaterialTopTabs.Screen
+            name="edit"
+            options={{
+              title: 'Modifier',
+              tabBarIcon: ({ focused }) => (
+                <Icon name="edit" size={20} color={focused ? 'astral' : 'muted'} />
+              ),
+            }}
+          />
+        </MaterialTopTabs.Protected>
       </MaterialTopTabs>
     </>
   );
