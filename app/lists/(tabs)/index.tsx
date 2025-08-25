@@ -15,6 +15,7 @@ import { useDrizzle } from '~/hooks/use-drizzle';
 import { formatListItems } from '~/utils/format';
 import Animated from 'react-native-reanimated';
 import { Link } from 'expo-router';
+import { Eye, PlusCircle, Trash } from 'lucide-react-native';
 
 export default function DisplayListsPage() {
   const db = useDrizzle();
@@ -28,7 +29,7 @@ export default function DisplayListsPage() {
           <View>
             <HStack style={styles.buttonGroup} gap="none">
               <Button action="destructive" style={styles.buttonItem}>
-                <ButtonIcon name="trash" />
+                <ButtonIcon as={Trash} />
               </Button>
               <Link
                 href={{
@@ -39,7 +40,7 @@ export default function DisplayListsPage() {
                 }}
                 asChild>
                 <Button style={styles.buttonItem}>
-                  <ButtonIcon name="eye" />
+                  <ButtonIcon as={Eye} />
                 </Button>
               </Link>
             </HStack>
@@ -78,7 +79,7 @@ export default function DisplayListsPage() {
             <Text size="lg">Aucune liste n&apos;existe pour le moment. 😕</Text>
             <Link href="/lists/create" asChild>
               <Button>
-                <ButtonIcon name="plus" />
+                <ButtonIcon as={PlusCircle} />
                 <ButtonText>Ajouter une liste</ButtonText>
               </Button>
             </Link>

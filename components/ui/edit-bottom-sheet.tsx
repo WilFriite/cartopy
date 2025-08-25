@@ -14,6 +14,7 @@ import { Alert } from 'react-native';
 import { wait } from '~/utils/wait';
 import { DateTime } from 'luxon';
 import { BaseBottomSheet } from './base-bottom-sheet';
+import { Check } from 'lucide-react-native';
 
 type Props = {
   listId: number;
@@ -75,7 +76,7 @@ export function EditBottomSheet({ listId, bottomSheetRef, handleSheetChanges, it
             isLoading={updateItemsMutation.isPending}
             style={styles.swipeButton}
             text="Swipe to save"
-            iconName="check"
+            icon={Check}
             variant="normal"
             onSwipeComplete={() => {
               updateItemsMutation.mutateAsync(remainingItems.map((item) => item.name).join(', '));

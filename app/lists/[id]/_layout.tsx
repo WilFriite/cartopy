@@ -4,11 +4,12 @@ import {
   MaterialTopTabNavigationOptions,
 } from '@react-navigation/material-top-tabs';
 import { Link, Stack, useLocalSearchParams, withLayoutContext } from 'expo-router';
-import { Icon } from '~/components/ui/icon';
 import { ParamListBase, TabNavigationState } from '@react-navigation/native';
 import { useUnistyles } from 'react-native-unistyles';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useDrizzle } from '~/hooks/use-drizzle';
+import { LucIcon } from '~/components/ui/luc-icon';
+import { ArrowLeftCircle, Edit, Eye } from 'lucide-react-native';
 
 const { Navigator } = createMaterialTopTabNavigator();
 
@@ -40,7 +41,7 @@ export default function ListDetailsLayout() {
           },
           headerLeft: () => (
             <Link href={'/lists'} asChild>
-              <Icon name="arrow-circle-left" size={20} color="muted" />
+              <LucIcon as={ArrowLeftCircle} size={20} color="muted" />
             </Link>
           ),
           headerTintColor: theme.colors.astral,
@@ -67,7 +68,7 @@ export default function ListDetailsLayout() {
             options={{
               title: 'Voir',
               tabBarIcon: ({ focused }) => (
-                <Icon name="eye" size={20} color={focused ? 'astral' : 'muted'} />
+                <LucIcon as={Eye} size={20} color={focused ? 'astral' : 'muted'} />
               ),
             }}
           />
@@ -76,7 +77,7 @@ export default function ListDetailsLayout() {
             options={{
               title: 'Modifier',
               tabBarIcon: ({ focused }) => (
-                <Icon name="edit" size={20} color={focused ? 'astral' : 'muted'} />
+                <LucIcon as={Edit} size={20} color={focused ? 'astral' : 'muted'} />
               ),
             }}
           />
