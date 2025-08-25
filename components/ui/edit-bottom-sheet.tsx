@@ -15,7 +15,7 @@ import { useMutation } from '@tanstack/react-query';
 import { lists } from '~/db/schema';
 import { eq } from 'drizzle-orm';
 import { useDrizzle } from '~/hooks/use-drizzle';
-import { Alert , View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { wait } from '~/utils/wait';
 import { DateTime } from 'luxon';
 
@@ -77,6 +77,10 @@ export function EditBottomSheet({
       setItems(it);
     }
   }, [it]);
+
+  if (items.length === 0) {
+    return null;
+  }
 
   return (
     <BottomSheet
