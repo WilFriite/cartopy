@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useCallback } from 'react';
-import { FlatList, View } from 'react-native';
+import { Alert, FlatList, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native-unistyles';
 import { Button, ButtonIcon, ButtonText } from '~/components/ui/btn';
@@ -14,12 +14,43 @@ import { lists, ListSelectType } from '~/db/schema';
 import { useDrizzle } from '~/hooks/use-drizzle';
 import { formatListItems } from '~/utils/format';
 import Animated from 'react-native-reanimated';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { Eye, PlusCircle, Trash } from 'lucide-react-native';
+import { eq } from 'drizzle-orm';
+import { useMutation } from '@tanstack/react-query';
 
 export default function DisplayListsPage() {
   const db = useDrizzle();
   const { data } = useLiveQuery(db.select().from(lists));
+
+  const deleteListMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return db.delete(lists).where(eq(lists.id, id)).run();
+    },
+    onSuccess: () => {
+      Alert.alert('Succès', 'Liste supprimée avec succès');
+      router.replace('/lists');
+    },
+    onError: (error) => {
+      Alert.alert('Erreur', 'Erreur lors de la suppression de la liste');
+      console.error('Delete list error:', error);
+    },
+  });
+
+  const handleDeleteList = (list: ListSelectType) => {
+    Alert.alert(
+      `Supprimer la liste "${list.name}"`,
+      'Cette action est irréversible. Êtes-vous sûr de vouloir supprimer la liste ?',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Supprimer',
+          style: 'destructive',
+          onPress: () => deleteListMutation.mutate(list.id),
+        },
+      ]
+    );
+  };
 
   const renderItem = useCallback((item: ListSelectType) => {
     return (
@@ -28,7 +59,10 @@ export default function DisplayListsPage() {
         hiddenPan={
           <View>
             <HStack style={styles.buttonGroup} gap="none">
-              <Button action="destructive" style={styles.buttonItem}>
+              <Button
+                action="destructive"
+                style={styles.buttonItem}
+                onPress={() => handleDeleteList(item)}>
                 <ButtonIcon as={Trash} />
               </Button>
               <Link
