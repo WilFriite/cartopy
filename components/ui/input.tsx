@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { StyleSheet, type UnistylesVariants, useUnistyles } from 'react-native-unistyles';
 import { Text } from './typography';
-import { Icon } from './icon';
+import { LucIcon } from './luc-icon';
 
 type InputVariants = UnistylesVariants<typeof styles>;
 
@@ -18,8 +18,8 @@ export type InputProps = RNTextInputProps &
     appearance?: 'outline' | 'filled';
     label?: string;
     helperText?: string;
-    leftIconName?: React.ComponentProps<typeof Icon>['name'];
-    rightIconName?: React.ComponentProps<typeof Icon>['name'];
+    leftIcon?: React.ComponentProps<typeof LucIcon>['as'];
+    rightIcon?: React.ComponentProps<typeof LucIcon>['as'];
     containerStyle?: StyleProp<ViewStyle>;
     isError?: boolean;
   };
@@ -29,8 +29,8 @@ export const Input = forwardRef<RNTextInput, InputProps>(
     {
       label,
       helperText,
-      leftIconName,
-      rightIconName,
+      leftIcon,
+      rightIcon,
       appearance = 'outline',
       size = 'md',
       editable = true,
@@ -67,8 +67,8 @@ export const Input = forwardRef<RNTextInput, InputProps>(
           activeOpacity={1}
           onPress={() => inputRef.current?.focus()}
           style={[styles.fieldWrapper, containerStyle]}>
-          {leftIconName ? (
-            <Icon name={leftIconName} size={18} color={isError ? 'crimson' : 'muted'} />
+          {leftIcon ? (
+            <LucIcon as={leftIcon} size={18} color={isError ? 'crimson' : 'muted'} />
           ) : null}
           <RNTextInput
             ref={inputRef}
@@ -85,9 +85,9 @@ export const Input = forwardRef<RNTextInput, InputProps>(
             placeholderTextColor={placeholderTextColor ?? theme.colors.muted}
             {...props}
           />
-          {rightIconName ? (
-            <Icon
-              name={rightIconName}
+          {rightIcon ? (
+            <LucIcon
+              as={rightIcon}
               size={18}
               color={isError ? 'crimson' : isFocused ? 'astral' : 'muted'}
             />

@@ -34,7 +34,7 @@ export default function Layout() {
     <Providers>
       <Stack
         screenOptions={{
-          headerShown: false,
+          headerShown: true,
           headerStyle: {
             backgroundColor: theme.colors.background,
           },

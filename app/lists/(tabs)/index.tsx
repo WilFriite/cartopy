@@ -15,6 +15,7 @@ import { useDrizzle } from '~/hooks/use-drizzle';
 import { formatListItems } from '~/utils/format';
 import Animated from 'react-native-reanimated';
 import { Link } from 'expo-router';
+import { Eye, PlusCircle, Trash } from 'lucide-react-native';
 
 export default function DisplayListsPage() {
   const db = useDrizzle();
@@ -28,11 +29,20 @@ export default function DisplayListsPage() {
           <View>
             <HStack style={styles.buttonGroup} gap="none">
               <Button action="destructive" style={styles.buttonItem}>
-                <ButtonIcon name="trash" />
+                <ButtonIcon as={Trash} />
               </Button>
-              <Button style={styles.buttonItem}>
-                <ButtonIcon name="eye" />
-              </Button>
+              <Link
+                href={{
+                  pathname: '/lists/[id]',
+                  params: {
+                    id: item.id.toString(),
+                  },
+                }}
+                asChild>
+                <Button style={styles.buttonItem}>
+                  <ButtonIcon as={Eye} />
+                </Button>
+              </Link>
             </HStack>
           </View>
         }>
@@ -54,28 +64,27 @@ export default function DisplayListsPage() {
         <Text size="xl" align="center">
           Mes Listes
         </Text>
-          {
-            data.length < 0 ? (
-              <Animated.ScrollView style={{ flex: 1, height: '100%' }}>
-                <FlatList
-                  data={data}
-                  numColumns={1}
-                  scrollEnabled={false}
-                  keyExtractor={(item) => item.id.toString()}
-                  renderItem={({ item }) => renderItem(item)}
-                />
-              </Animated.ScrollView>
-            ) : (
-              <View style={styles.emptyList}>
-                <Text size="lg">Aucune liste n'existe pour le moment. 😕</Text>
-                <Link href="/lists/create" asChild>
-                  <Button>
-                    <ButtonIcon name="plus" />
-                    <ButtonText>Ajouter une liste</ButtonText>
-                  </Button>
-                </Link>
-              </View>
-          )}
+        {data.length > 0 ? (
+          <Animated.ScrollView style={{ flex: 1, height: '100%' }}>
+            <FlatList
+              data={data}
+              numColumns={1}
+              scrollEnabled={false}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => renderItem(item)}
+            />
+          </Animated.ScrollView>
+        ) : (
+          <View style={styles.emptyList}>
+            <Text size="lg">Aucune liste n&apos;existe pour le moment. 😕</Text>
+            <Link href="/lists/create" asChild>
+              <Button>
+                <ButtonIcon as={PlusCircle} />
+                <ButtonText>Ajouter une liste</ButtonText>
+              </Button>
+            </Link>
+          </View>
+        )}
       </Container>
     </GestureHandlerRootView>
   );
