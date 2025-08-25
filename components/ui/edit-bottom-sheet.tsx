@@ -1,13 +1,8 @@
 import { CheckableListItem } from './checkable-list-item';
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetBackdropProps,
-  BottomSheetFlatList,
-  BottomSheetFooter,
-} from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetFlatList, BottomSheetFooter } from '@gorhom/bottom-sheet';
 import { StyleSheet } from 'react-native-unistyles';
 import { PaperUI } from './paper-sheet';
-import { useMemo, useCallback, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Easing } from 'react-native-reanimated';
 import { ProgressBar } from './progress-bar';
 import { SwipeButton } from './swipe-button';
@@ -15,7 +10,7 @@ import { useMutation } from '@tanstack/react-query';
 import { lists } from '~/db/schema';
 import { eq } from 'drizzle-orm';
 import { useDrizzle } from '~/hooks/use-drizzle';
-import { Alert, View } from 'react-native';
+import { Alert } from 'react-native';
 import { wait } from '~/utils/wait';
 import { DateTime } from 'luxon';
 import { BaseBottomSheet } from './base-bottom-sheet';
@@ -25,29 +20,14 @@ type Props = {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
   handleSheetChanges?: (index: number) => void;
   it: { name: string; completed: boolean; id: number }[];
-  onClose: () => void;
 };
 
-export function EditBottomSheet({
-  listId,
-  bottomSheetRef,
-  handleSheetChanges,
-  it,
-  onClose,
-}: Props) {
+export function EditBottomSheet({ listId, bottomSheetRef, handleSheetChanges, it }: Props) {
   const [items, setItems] = useState(it);
   const snapPoints = ['75%'];
   const db = useDrizzle();
-  const renderBackdrop = useCallback(
-    (props: BottomSheetBackdropProps) => (
-      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
-    ),
-    []
-  );
 
-  const checkedPercentage = useMemo(() => {
-    return (items.filter((item) => item.completed).length / items.length) * 100;
-  }, [items]);
+  const checkedPercentage = (items.filter((item) => item.completed).length / items.length) * 100;
 
   const remainingItems = items.filter((item) => !item.completed);
 
@@ -61,8 +41,8 @@ export function EditBottomSheet({
         .run();
     },
     onSuccess: () => {
+      bottomSheetRef.current?.close();
       Alert.alert('Succès', 'Articles mis à jour avec succès');
-      onClose();
     },
     onError: (error) => {
       Alert.alert('Erreur', 'Erreur lors de la mise à jour des articles');
@@ -87,7 +67,6 @@ export function EditBottomSheet({
     <BaseBottomSheet
       snapPoints={snapPoints}
       bottomSheetRef={bottomSheetRef}
-      onClose={onClose}
       handleSheetChanges={handleSheetChanges}
       footerComponent={(props) => (
         <BottomSheetFooter {...props}>
