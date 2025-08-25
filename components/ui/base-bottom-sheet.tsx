@@ -12,7 +12,7 @@ type Props = {
   snapPoints: (string | number)[];
   bottomSheetRef: React.RefObject<BottomSheet | null>;
   handleSheetChanges?: (index: number) => void;
-  onClose: () => void;
+  onClose?: () => void;
   footerComponent?: FC<BottomSheetFooterProps>;
 };
 
@@ -36,7 +36,7 @@ export function BaseBottomSheet({
     <BottomSheet
       snapPoints={snapPoints}
       ref={bottomSheetRef}
-      index={0}
+      index={-1}
       onChange={handleSheetChanges}
       onClose={onClose}
       enablePanDownToClose
