@@ -15,7 +15,7 @@ import { useMutation } from '@tanstack/react-query';
 import { lists } from '~/db/schema';
 import { eq } from 'drizzle-orm';
 import { useDrizzle } from '~/hooks/use-drizzle';
-import { Alert } from 'react-native';
+import { Alert , View } from 'react-native';
 import { wait } from '~/utils/wait';
 import { DateTime } from 'luxon';
 
@@ -89,50 +89,54 @@ export function EditBottomSheet({
       enableContentPanningGesture
       backdropComponent={renderBackdrop}
       handleIndicatorStyle={styles.bottomSheetHandleIndicator}>
-      <BottomSheetView style={styles.bottomSheetContent}>
-        <ProgressBar
-          progress={checkedPercentage}
-          duration={1000}
-          easing={Easing.bounce}
-          showPercentage
-        />
-        <PaperUI>
-          <BottomSheetFlatList
-            data={items}
-            renderItem={({ item }) => (
-              <CheckableListItem item={item} onItemToggle={handleItemToggle} />
-            )}
-            keyExtractor={(item) => item.id.toString()}
+      <BottomSheetView style={styles.bottomSheetContainer}>
+        <View style={styles.bottomSheetContent}>
+          <ProgressBar
+            progress={checkedPercentage}
+            duration={1000}
+            easing={Easing.bounce}
+            showPercentage
           />
-        </PaperUI>
-        <SwipeButton
-          disabled={checkedPercentage <= 0}
-          isLoading={updateItemsMutation.isPending}
-          style={styles.swipeButton}
-          text="Swipe to save"
-          iconName="check"
-          variant="normal"
-          onSwipeComplete={() => {
-            updateItemsMutation.mutateAsync(remainingItems.map((item) => item.name).join(', '));
-          }}
-        />
+          <PaperUI>
+            <BottomSheetFlatList
+              data={items}
+              renderItem={({ item }) => (
+                <CheckableListItem item={item} onItemToggle={handleItemToggle} />
+              )}
+              keyExtractor={(item) => item.id.toString()}
+            />
+          </PaperUI>
+          <SwipeButton
+            disabled={checkedPercentage <= 0}
+            isLoading={updateItemsMutation.isPending}
+            style={styles.swipeButton}
+            text="Swipe to save"
+            iconName="check"
+            variant="normal"
+            onSwipeComplete={() => {
+              updateItemsMutation.mutateAsync(remainingItems.map((item) => item.name).join(', '));
+            }}
+          />
+        </View>
       </BottomSheetView>
     </BottomSheet>
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create((theme, rt) => ({
   bottomSheetContainer: {
     flex: 1,
-    backgroundColor: 'grey',
+    height: '100%',
   },
   bottomSheetContent: {
     flex: 1,
     height: '100%',
+    backgroundColor: rt.colorScheme === 'dark' ? theme.colors.background : theme.colors.surface,
     padding: theme.spacing.md,
   },
   bottomSheetHandleIndicator: {
     backgroundColor: theme.colors.astral,
+    width: 50,
   },
   swipeButton: {
     marginTop: theme.spacing.md,
