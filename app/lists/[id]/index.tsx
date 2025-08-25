@@ -33,7 +33,7 @@ export default function ViewTab() {
     completed: false,
   }));
 
-  const lastPerformedBase = DateTime.fromISO(list?.lastPerformedAt || '');
+  const lastPerformedBase = DateTime.fromISO(list?.lastPerformedAt || '').setLocale('fr');
 
   const lastPerformedAt = lastPerformedBase.isValid
     ? lastPerformedBase.toLocaleString({
