@@ -3,7 +3,7 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
   BottomSheetFlatList,
-  BottomSheetView,
+  BottomSheetFooter,
 } from '@gorhom/bottom-sheet';
 import { StyleSheet } from 'react-native-unistyles';
 import { PaperUI } from './paper-sheet';
@@ -18,6 +18,7 @@ import { useDrizzle } from '~/hooks/use-drizzle';
 import { Alert, View } from 'react-native';
 import { wait } from '~/utils/wait';
 import { DateTime } from 'luxon';
+import { BaseBottomSheet } from './base-bottom-sheet';
 
 type Props = {
   listId: number;
@@ -83,33 +84,13 @@ export function EditBottomSheet({
   }
 
   return (
-    <BottomSheet
+    <BaseBottomSheet
       snapPoints={snapPoints}
-      ref={bottomSheetRef}
-      index={0}
-      onChange={handleSheetChanges}
+      bottomSheetRef={bottomSheetRef}
       onClose={onClose}
-      enablePanDownToClose
-      enableContentPanningGesture
-      backdropComponent={renderBackdrop}
-      handleIndicatorStyle={styles.bottomSheetHandleIndicator}>
-      <BottomSheetView style={styles.bottomSheetContainer}>
-        <View style={styles.bottomSheetContent}>
-          <ProgressBar
-            progress={checkedPercentage}
-            duration={1000}
-            easing={Easing.bounce}
-            showPercentage
-          />
-          <PaperUI>
-            <BottomSheetFlatList
-              data={items}
-              renderItem={({ item }) => (
-                <CheckableListItem item={item} onItemToggle={handleItemToggle} />
-              )}
-              keyExtractor={(item) => item.id.toString()}
-            />
-          </PaperUI>
+      handleSheetChanges={handleSheetChanges}
+      footerComponent={(props) => (
+        <BottomSheetFooter {...props}>
           <SwipeButton
             disabled={checkedPercentage <= 0}
             isLoading={updateItemsMutation.isPending}
@@ -121,29 +102,30 @@ export function EditBottomSheet({
               updateItemsMutation.mutateAsync(remainingItems.map((item) => item.name).join(', '));
             }}
           />
-        </View>
-      </BottomSheetView>
-    </BottomSheet>
+        </BottomSheetFooter>
+      )}>
+      <ProgressBar
+        progress={checkedPercentage}
+        duration={1000}
+        easing={Easing.bounce}
+        showPercentage
+      />
+      <PaperUI>
+        <BottomSheetFlatList
+          data={items}
+          renderItem={({ item }) => (
+            <CheckableListItem item={item} onItemToggle={handleItemToggle} />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      </PaperUI>
+    </BaseBottomSheet>
   );
 }
 
-const styles = StyleSheet.create((theme, rt) => ({
-  bottomSheetContainer: {
-    flex: 1,
-    height: '100%',
-  },
-  bottomSheetContent: {
-    flex: 1,
-    height: '100%',
-    backgroundColor: rt.colorScheme === 'dark' ? theme.colors.background : theme.colors.surface,
-    padding: theme.spacing.md,
-  },
-  bottomSheetHandleIndicator: {
-    backgroundColor: theme.colors.astral,
-    width: 50,
-  },
+const styles = StyleSheet.create((theme) => ({
   swipeButton: {
-    marginTop: theme.spacing.md,
-    width: '100%',
+    width: '95%',
+    alignSelf: 'center',
   },
 }));
