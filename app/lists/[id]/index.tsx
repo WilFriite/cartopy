@@ -8,7 +8,7 @@ import { HStack, VStack } from '~/components/ui/stack';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { formatListItems } from '~/utils/format';
 import { StyleSheet } from 'react-native-unistyles';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import type BottomSheet from '@gorhom/bottom-sheet';
@@ -17,7 +17,6 @@ import { EditBottomSheet } from '~/components/ui/edit-bottom-sheet';
 export default function ViewTab() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const db = useDrizzle();
-  const [showPaperSheet, setShowPaperSheet] = useState(false);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -53,7 +52,6 @@ export default function ViewTab() {
     });
 
   const handleBottomSheetOpen = () => {
-    setShowPaperSheet(true);
     bottomSheetRef.current?.expand();
   };
 
@@ -65,7 +63,7 @@ export default function ViewTab() {
           {/* Last Performed Section */}
           <View style={styles.sectionContainer}>
             <Text size="lg" weight="bold" style={styles.sectionTitle}>
-              Dernière utilisation ({String(showPaperSheet)})
+              Dernière utilisation
             </Text>
             <Text size="base" color="muted">
               {lastPerformedAt ? lastPerformedAt : "Cette liste n'a jamais été utilisée"}
@@ -76,20 +74,16 @@ export default function ViewTab() {
           <VStack gap="none" style={[styles.sectionContainer, { flex: 1 }]}>
             <View style={styles.itemsHeader}>
               <View style={styles.headerControls}>
-                <HStack>
-                  {it.length > 0 ? (
-                    <>
-                      <Text size="base" color="muted" align="center">
-                        {it.length} articles à acheter.
-                      </Text>
-                      <Button onPress={handleBottomSheetOpen} outlined style={styles.toggleButton}>
-                        <ButtonText>
-                          {showPaperSheet ? 'caca 💩' : "It's grocery timee!🛒"}
-                        </ButtonText>
-                      </Button>
-                    </>
-                  ) : null}
-                </HStack>
+                {it.length > 0 ? (
+                  <HStack>
+                    <Text size="base" color="muted" align="center">
+                      {it.length} articles à acheter.
+                    </Text>
+                    <Button onPress={handleBottomSheetOpen} outlined style={styles.toggleButton}>
+                      <ButtonText>It&apos;s grocery timee! 🛒</ButtonText>
+                    </Button>
+                  </HStack>
+                ) : null}
               </View>
             </View>
 
@@ -128,12 +122,7 @@ export default function ViewTab() {
             </Text>
           </View>
 
-          <EditBottomSheet
-            listId={Number(id)}
-            bottomSheetRef={bottomSheetRef}
-            onClose={() => setShowPaperSheet(false)}
-            it={it}
-          />
+          <EditBottomSheet listId={Number(id)} bottomSheetRef={bottomSheetRef} it={it} />
         </SafeAreaView>
       </GestureHandlerRootView>
     </>
