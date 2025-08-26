@@ -110,9 +110,9 @@ export default function CreateListPage() {
             {(field) => (
               <VStack>
                 <Textarea
-                  label="Items à ajouter"
+                  label="Articles à ajouter"
                   size="md"
-                  helperText="Séparés par des virgules…"
+                  helperText="Séparés par des virgules… (ex: Pain, Lait, Œufs)"
                   id={field.name}
                   value={field.state.value || ''}
                   onBlur={field.handleBlur}
