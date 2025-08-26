@@ -49,9 +49,7 @@
       "indexes": {
         "lists_name_unique": {
           "name": "lists_name_unique",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "isUnique": true
         }
       },
