@@ -128,7 +128,7 @@ export default function EditTab() {
 
   return (
     <ScrollView style={styles.container}>
-      <VStack style={styles.contentPadding}>
+      <VStack>
         <VStack gap="lg">
           <Text size="lg" weight="bold" style={{ marginBottom: 16 }}>
             Édition de la liste
@@ -240,8 +240,6 @@ const styles = StyleSheet.create((theme, rt) => ({
     flex: 1,
     backgroundColor: theme.colors.background,
     paddingBottom: rt.insets.bottom,
-  },
-  contentPadding: {
     padding: 16,
   },
 }));
