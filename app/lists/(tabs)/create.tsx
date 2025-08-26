@@ -25,7 +25,10 @@ const schema = z.object({
   name: z
     .string()
     .min(3, 'Le nom doit avoir au minimum 3 caractères.')
-    .regex(/^[\w\s]+$/, 'Le nom ne doit contenir que des caractères alpha-numériques'),
+    .regex(
+      /^[a-zA-Z0-9À-ÿ\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF\s]+$/,
+      'Le nom ne doit contenir que des lettres, chiffres et espaces'
+    ),
   items: z
     .string()
     .optional()
