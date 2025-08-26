@@ -8,7 +8,7 @@ type Props = LucideProps & {
   color: keyof ThemeColors;
 };
 
-export const LucIcon = ({ color, as, ...props }: Props) => {
+export const Icon = ({ color, as, ...props }: Props) => {
   const { theme } = useUnistyles();
   const selectedColor = theme.colors[color];
   const Component = as;

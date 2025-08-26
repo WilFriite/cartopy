@@ -105,7 +105,7 @@ export default function ViewTab() {
               <Text size="sm" color="muted" align="center">
                 Vous pouvez en ajouter dans l&apos;onglet{' '}
                 <Text size="sm" weight="bold" color="muted" align="center">
-                  &quot;Modifier&quot;
+                  &quot;Modification&quot;
                 </Text>{' '}
                 juste à côté.
               </Text>

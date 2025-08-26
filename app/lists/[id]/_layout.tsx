@@ -8,7 +8,7 @@ import { ParamListBase, TabNavigationState } from '@react-navigation/native';
 import { useUnistyles } from 'react-native-unistyles';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useDrizzle } from '~/hooks/use-drizzle';
-import { LucIcon } from '~/components/ui/luc-icon';
+import { Icon } from '~/components/ui/icon';
 import { ArrowLeftCircle, Edit, Eye } from 'lucide-react-native';
 
 const { Navigator } = createMaterialTopTabNavigator();
@@ -40,12 +40,14 @@ export default function ListDetailsLayout() {
       <Stack.Screen
         options={{
           title: list?.name,
+          headerTitleAlign: 'center',
           headerStyle: {
             backgroundColor: theme.colors.background,
           },
+          headerShadowVisible: false,
           headerLeft: () => (
             <Link href={'/lists'} asChild>
-              <LucIcon as={ArrowLeftCircle} size={20} color="muted" />
+              <Icon as={ArrowLeftCircle} size={20} color="muted" />
             </Link>
           ),
           headerTintColor: theme.colors.astral,
@@ -73,7 +75,7 @@ export default function ListDetailsLayout() {
             options={{
               title: 'Détails',
               tabBarIcon: ({ focused }) => (
-                <LucIcon as={Eye} size={20} color={focused ? 'astral' : 'muted'} />
+                <Icon as={Eye} size={20} color={focused ? 'astral' : 'muted'} />
               ),
             }}
           />
@@ -83,7 +85,7 @@ export default function ListDetailsLayout() {
             options={{
               title: 'Modification',
               tabBarIcon: ({ focused }) => (
-                <LucIcon as={Edit} size={20} color={focused ? 'astral' : 'muted'} />
+                <Icon as={Edit} size={20} color={focused ? 'astral' : 'muted'} />
               ),
             }}
           />
