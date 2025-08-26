@@ -40,9 +40,11 @@ export default function ListDetailsLayout() {
       <Stack.Screen
         options={{
           title: list?.name,
+          headerTitleAlign: 'center',
           headerStyle: {
             backgroundColor: theme.colors.background,
           },
+          headerShadowVisible: false,
           headerLeft: () => (
             <Link href={'/lists'} asChild>
               <LucIcon as={ArrowLeftCircle} size={20} color="muted" />
