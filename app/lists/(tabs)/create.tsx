@@ -19,7 +19,7 @@ const defaultValues: ListInsertType = {
   items: '',
 };
 
-const itemsRegex = /^[A-Za-z0-9 ]+(?:, [A-Za-z0-9 ]+)*(?:[, ])?$/;
+const itemsRegex = /^(?=.*,.*)|^[A-Za-z0-9 ]+$/;
 
 const schema = z.object({
   name: z
@@ -28,7 +28,11 @@ const schema = z.object({
     .regex(/^[\w\s]+$/, 'Le nom ne doit contenir que des caractères alpha-numériques'),
   items: z
     .string()
-    .regex(itemsRegex, 'Use letters, numbers, spaces, and ", " as the only separator'),
+    .optional()
+    .refine(
+      (value) => !value || value.trim() === '' || itemsRegex.test(value),
+      'Use letters, numbers, spaces, and ", " as the only separator'
+    ),
 });
 
 export default function CreateListPage() {
