@@ -20,12 +20,20 @@ import { Divider } from '~/components/ui/divider';
 const nameSchema = z
   .string()
   .min(3, 'Le nom doit avoir au minimum 3 caractères.')
-  .regex(/^[\w\s]+$/, 'Le nom ne doit contenir que des caractères alpha-numériques');
+  .regex(
+    /^[a-zA-Z0-9À-ÿ\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF\s]+$/,
+    'Le nom ne doit contenir que des lettres, chiffres et espaces.'
+  );
 
-const itemsRegex = /^[A-Za-z0-9 ]+(?:, [A-Za-z0-9 ]+)*(?:[, ])?$/;
+const itemsRegex = /^(?=.*,.*)|^[A-Za-z0-9 ]+$/;
+
 const itemsSchema = z
   .string()
-  .regex(itemsRegex, 'Use letters, numbers, spaces, and ", " as the only separator');
+  // .default('')
+  .refine(
+    (value) => !value || value.trim() === '' || itemsRegex.test(value),
+    'Seulement des lettres, chiffres, espaces et virgules sont autorisés.'
+  );
 
 export default function EditTab() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -101,7 +109,7 @@ export default function EditTab() {
   // Items form
   const itemsForm = useForm({
     defaultValues: {
-      items: formatListItems(list?.items || '').join(', '),
+      items: formatListItems(list?.items || '').join(', ') || '',
     },
     onSubmit: async ({ value }) => {
       const formattedItems = formatListItems(value.items)
@@ -189,14 +197,15 @@ export default function EditTab() {
                 onChange: itemsSchema,
               }}>
               {(field) => (
-                <VStack gap="sm">
+                <VStack>
                   <Textarea
-                    label="Articles"
+                    label="Articles à ajouter"
                     size="md"
                     helperText="Séparés par des virgules… (ex: Pain, Lait, Œufs)"
+                    id={field.name}
                     value={field.state.value || ''}
-                    onChangeText={field.handleChange}
                     onBlur={field.handleBlur}
+                    onChangeText={field.handleChange}
                     isError={field.state.meta.errors.length > 0}
                     style={{ minHeight: 100 }}
                   />

@@ -19,24 +19,23 @@ const defaultValues: ListInsertType = {
   items: '',
 };
 
+const nameSchema = z
+  .string()
+  .min(3, 'Le nom doit avoir au minimum 3 caractères.')
+  .regex(
+    /^[a-zA-Z0-9À-ÿ\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF\s]+$/,
+    'Le nom ne doit contenir que des lettres, chiffres et espaces.'
+  );
+
 const itemsRegex = /^(?=.*,.*)|^[A-Za-z0-9 ]+$/;
 
-const schema = z.object({
-  name: z
-    .string()
-    .min(3, 'Le nom doit avoir au minimum 3 caractères.')
-    .regex(
-      /^[a-zA-Z0-9À-ÿ\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF\s]+$/,
-      'Le nom ne doit contenir que des lettres, chiffres et espaces'
-    ),
-  items: z
-    .string()
-    .optional()
-    .refine(
-      (value) => !value || value.trim() === '' || itemsRegex.test(value),
-      'Use letters, numbers, spaces, and ", " as the only separator'
-    ),
-});
+const itemsSchema = z
+  .string()
+  .default('')
+  .refine(
+    (value) => !value || value.trim() === '' || itemsRegex.test(value),
+    'Seulement des lettres, chiffres, espaces et virgules sont autorisés.'
+  );
 
 export default function CreateListPage() {
   const db = useDrizzle();
@@ -74,7 +73,7 @@ export default function CreateListPage() {
             name="name"
             asyncDebounceMs={300}
             validators={{
-              onChange: schema.shape.name,
+              onChange: nameSchema,
               onChangeAsync: async ({ value, fieldApi }) => {
                 const found = await db.query.lists.findFirst({
                   where: (lists, { eq, like }) =>
@@ -105,7 +104,7 @@ export default function CreateListPage() {
           <form.Field
             name="items"
             validators={{
-              onChange: schema.shape.items,
+              onChange: itemsSchema,
             }}>
             {(field) => (
               <VStack>
