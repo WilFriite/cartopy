@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useCallback } from 'react';
-import { Alert, FlatList, View } from 'react-native';
+import { Alert, FlatList, ScrollView, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native-unistyles';
 import { Button, ButtonIcon, ButtonText } from '~/components/ui/btn';
@@ -13,7 +13,6 @@ import { Text } from '~/components/ui/typography';
 import { lists, ListSelectType } from '~/db/schema';
 import { useDrizzle } from '~/hooks/use-drizzle';
 import { formatListItems } from '~/utils/format';
-import Animated from 'react-native-reanimated';
 import { Link, router } from 'expo-router';
 import { Eye, PlusCircle, Trash } from 'lucide-react-native';
 import { eq } from 'drizzle-orm';
@@ -99,7 +98,7 @@ export default function DisplayListsPage() {
           Mes Listes
         </Text>
         {data.length > 0 ? (
-          <Animated.ScrollView style={{ flex: 1, height: '100%' }}>
+          <ScrollView style={{ flex: 1, height: '100%' }}>
             <FlatList
               data={data}
               numColumns={1}
@@ -107,7 +106,7 @@ export default function DisplayListsPage() {
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => renderItem(item)}
             />
-          </Animated.ScrollView>
+          </ScrollView>
         ) : (
           <View style={styles.emptyList}>
             <Text size="lg">Aucune liste n&apos;existe pour le moment. 😕</Text>
