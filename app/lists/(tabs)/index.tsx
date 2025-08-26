@@ -7,14 +7,14 @@ import { Button, ButtonIcon, ButtonText } from '~/components/ui/btn';
 import { Card } from '~/components/ui/card';
 
 import { Container } from '~/components/ui/container';
-import { HStack } from '~/components/ui/stack';
+import { HStack, VStack } from '~/components/ui/stack';
 import { SwipeableView } from '~/components/ui/swipeable-view';
 import { Text } from '~/components/ui/typography';
 import { lists, ListSelectType } from '~/db/schema';
 import { useDrizzle } from '~/hooks/use-drizzle';
 import { formatListItems } from '~/utils/format';
 import { Link, router } from 'expo-router';
-import { Eye, PlusCircle, Trash } from 'lucide-react-native';
+import { Eye, PlusCircle, Trash, Clock } from 'lucide-react-native';
 import { eq } from 'drizzle-orm';
 import { useMutation } from '@tanstack/react-query';
 
@@ -52,6 +52,8 @@ export default function DisplayListsPage() {
   };
 
   const renderItem = useCallback((item: ListSelectType) => {
+    const isTemporary = item.isTemporary;
+
     return (
       <SwipeableView
         style={styles.swipeable}
@@ -81,7 +83,17 @@ export default function DisplayListsPage() {
         }>
         <Card padding="lg" style={styles.card}>
           <Card.Header>
-            <Card.Title>{item.name}</Card.Title>
+            <HStack gap="sm" align="center" justify="between">
+              <Card.Title>{item.name}</Card.Title>
+              {isTemporary && (
+                <HStack gap="sm" align="center" style={styles.temporaryBadge}>
+                  <Clock size={14} color="#6366F1" />
+                  <Text size="sm" color="primary" weight="medium">
+                    Temporaire
+                  </Text>
+                </HStack>
+              )}
+            </HStack>
           </Card.Header>
           <Card.Body>
             <Text>{formatListItems(item.items)?.length} items</Text>
@@ -147,6 +159,14 @@ const styles = StyleSheet.create((theme) => ({
   card: {
     marginVertical: 0,
     borderRadius: theme.borderRadius.none,
+  },
+  temporaryBadge: {
+    backgroundColor: theme.colors.surface,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.borderRadius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.azureRadiance,
   },
   emptyList: {
     flex: 1,

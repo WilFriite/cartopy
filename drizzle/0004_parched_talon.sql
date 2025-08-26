@@ -1,0 +1,1 @@
+ALTER TABLE `lists` ADD `is_temporary` integer DEFAULT false NOT NULL;

@@ -5,6 +5,7 @@ import { Container } from '~/components/ui/container';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
 import { ErrorText, Text } from '~/components/ui/typography';
+import { Switch } from '~/components/ui/switch';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 import { lists, type ListInsertType } from '~/db/schema';
@@ -17,6 +18,7 @@ import { formatListItems } from '~/utils/format';
 const defaultValues: ListInsertType = {
   name: '',
   items: '',
+  isTemporary: false,
 };
 
 const nameSchema = z
@@ -124,6 +126,23 @@ export default function CreateListPage() {
               </VStack>
             )}
           </form.Field>
+
+          <form.Field name="isTemporary">
+            {(field) => (
+              <VStack>
+                <Switch
+                  value={field.state.value || false}
+                  onValueChange={field.handleChange}
+                  label="Liste temporaire (événement ponctuel)"
+                />
+                <Text size="sm" color="muted">
+                  Les listes temporaires nécessitent que tous les articles soient pris avant de
+                  terminer la session de courses.
+                </Text>
+              </VStack>
+            )}
+          </form.Field>
+
           <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
             {([canSubmit, isSubmitting]) => (
               <Button
