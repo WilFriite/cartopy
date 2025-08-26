@@ -2,7 +2,7 @@ import { createContext, forwardRef, useContext } from 'react';
 import { ActivityIndicator, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 import { Text } from './typography';
 import { StyleSheet, UnistylesVariants, useUnistyles } from 'react-native-unistyles';
-import { LucIcon } from './luc-icon';
+import { Icon } from './icon';
 
 /* Button container-related code */
 type ButtonContextType = UnistylesVariants<typeof styles>;
@@ -71,13 +71,10 @@ export const ButtonText = (props: React.ComponentProps<typeof Text>) => {
 };
 
 /* Button icon-related code */
-export const ButtonIcon = ({
-  as,
-  ...props
-}: Omit<React.ComponentProps<typeof LucIcon>, 'color'>) => {
+export const ButtonIcon = ({ as, ...props }: Omit<React.ComponentProps<typeof Icon>, 'color'>) => {
   const { outlined, action } = useButtonContext();
   const color = outlined ? (action === 'destructive' ? 'crimson' : 'astral') : 'white';
-  return <LucIcon as={as} size={18} color={color} {...props} />;
+  return <Icon as={as} size={18} color={color} {...props} />;
 };
 
 const styles = StyleSheet.create((theme) => ({

@@ -1,6 +1,6 @@
 import { Stack, Tabs } from 'expo-router';
 import { List, PlusCircle } from 'lucide-react-native';
-import { LucIcon } from '~/components/ui/luc-icon';
+import { Icon } from '~/components/ui/icon';
 import { TabBar } from '~/components/ui/tab-bar';
 
 export default function ListsPagesLayout() {
@@ -17,7 +17,7 @@ export default function ListsPagesLayout() {
           options={{
             title: 'Mes listes',
             tabBarIcon: ({ focused }) => (
-              <LucIcon as={List} size={16} color={focused ? 'astral' : 'muted'} />
+              <Icon as={List} size={16} color={focused ? 'astral' : 'muted'} />
             ),
           }}
         />
@@ -26,7 +26,7 @@ export default function ListsPagesLayout() {
           options={{
             title: 'Ajouter',
             tabBarIcon: ({ focused }) => (
-              <LucIcon as={PlusCircle} size={16} color={focused ? 'astral' : 'muted'} />
+              <Icon as={PlusCircle} size={16} color={focused ? 'astral' : 'muted'} />
             ),
           }}
         />

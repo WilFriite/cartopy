@@ -11,7 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 import { Text } from './typography';
-import { LucIcon } from './luc-icon';
+import { Icon } from './icon';
 import { ArrowRight } from 'lucide-react-native';
 
 /**
@@ -23,7 +23,7 @@ interface SwipeButtonProps extends ViewProps {
   /** Text to display in the button */
   text?: string;
   /** Icon to display in the swipeable button */
-  icon?: React.ComponentProps<typeof LucIcon>['as'];
+  icon?: React.ComponentProps<typeof Icon>['as'];
   /** Button variant for different styles */
   variant?: 'normal' | 'destructive';
   /** Disabled state */
@@ -171,7 +171,7 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
               <Text size="base" weight="medium" style={styles.text}>
                 {text}
               </Text>
-              <LucIcon as={ArrowRight} size={16} color="muted" />
+              <Icon as={ArrowRight} size={16} color="muted" />
             </>
           ) : (
             <Text size="base" weight="medium" style={styles.text}>
@@ -195,7 +195,7 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
               {isLoading ? (
                 <ActivityIndicator size="small" color={theme.colors.white} />
               ) : (
-                <LucIcon as={icon} size={20} color="white" />
+                <Icon as={icon} size={20} color="white" />
               )}
             </Animated.View>
           </Animated.View>
