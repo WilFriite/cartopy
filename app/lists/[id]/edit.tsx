@@ -244,11 +244,4 @@ const styles = StyleSheet.create((theme, rt) => ({
   contentPadding: {
     padding: 16,
   },
-  itemsPreview: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.colors.outline,
-    padding: 16,
-  },
 }));
