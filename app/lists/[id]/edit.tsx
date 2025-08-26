@@ -25,7 +25,7 @@ const nameSchema = z
     'Le nom ne doit contenir que des lettres, chiffres et espaces.'
   );
 
-const itemsRegex = /^(?=.*,.*)|^[A-Za-z0-9 ]+$/;
+const itemsRegex = /^[A-Za-z0-9 ,]+$/;
 
 const itemsSchema = z
   .string()
@@ -116,6 +116,9 @@ export default function EditTab() {
         .map((item) => item[0].toUpperCase() + item.slice(1))
         .join(', ');
       await updateItemsMutation.mutateAsync(formattedItems);
+    },
+    onSubmitInvalid: (error) => {
+      console.log(error);
     },
   });
 

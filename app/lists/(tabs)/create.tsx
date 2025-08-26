@@ -27,7 +27,7 @@ const nameSchema = z
     'Le nom ne doit contenir que des lettres, chiffres et espaces.'
   );
 
-const itemsRegex = /^(?=.*,.*)|^[A-Za-z0-9 ]+$/;
+const itemsRegex = /^[A-Za-z0-9 ,]+$/;
 
 const itemsSchema = z
   .string()
