@@ -1,4 +1,4 @@
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { View, FlatList } from 'react-native';
 import { Text } from '~/components/ui/typography';
 import { Button, ButtonText } from '~/components/ui/btn';
@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import type BottomSheet from '@gorhom/bottom-sheet';
 import { EditBottomSheet } from '~/components/ui/edit-bottom-sheet';
+import { Clock } from 'lucide-react-native';
 
 export default function ViewTab() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -55,9 +56,28 @@ export default function ViewTab() {
     bottomSheetRef.current?.expand();
   };
 
+  const isTemporary = list?.isTemporary || false;
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <SafeAreaView edges={['left', 'right']} style={styles.contentPadding}>
+        {/* Temporary List Notice */}
+        {isTemporary && (
+          <View style={styles.temporaryNotice}>
+            <HStack gap="sm" align="center">
+              <Clock size={20} color="#6366F1" />
+              <VStack gap="sm">
+                <Text size="lg" weight="bold" color="primary">
+                  Liste temporaire
+                </Text>
+                <Text size="sm" color="muted">
+                  Tous les articles doivent être pris avant de terminer la session de courses.
+                </Text>
+              </VStack>
+            </HStack>
+          </View>
+        )}
+
         {/* Last Performed Section */}
         <View style={styles.sectionContainer}>
           <Text size="lg" weight="bold" style={styles.sectionTitle}>
@@ -120,7 +140,12 @@ export default function ViewTab() {
           </Text>
         </View>
 
-        <EditBottomSheet listId={Number(id)} bottomSheetRef={bottomSheetRef} it={it} />
+        <EditBottomSheet
+          listId={Number(id)}
+          bottomSheetRef={bottomSheetRef}
+          it={it}
+          isTemporary={isTemporary}
+        />
       </SafeAreaView>
     </GestureHandlerRootView>
   );
@@ -141,6 +166,14 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   sectionTitle: {
     marginBottom: theme.spacing.md,
+  },
+  temporaryNotice: {
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    borderWidth: 2,
+    borderColor: theme.colors.azureRadiance,
+    marginTop: theme.spacing.lg,
   },
   markAsUsedButton: {
     marginTop: theme.spacing.lg,

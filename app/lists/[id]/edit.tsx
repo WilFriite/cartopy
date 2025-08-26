@@ -3,6 +3,7 @@ import { Text, ErrorText } from '~/components/ui/typography';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
 import { Button, ButtonText } from '~/components/ui/btn';
+import { Switch } from '~/components/ui/switch';
 import { useDrizzle } from '~/hooks/use-drizzle';
 import { lists } from '~/db/schema';
 import { eq, sql } from 'drizzle-orm';
@@ -80,6 +81,24 @@ export default function EditTab() {
     onError: (error) => {
       Alert.alert('Erreur', 'Erreur lors de la mise à jour des articles');
       console.error('Update items error:', error);
+    },
+  });
+
+  // Update temporary status mutation
+  const updateTemporaryMutation = useMutation({
+    mutationFn: async (isTemporary: boolean) => {
+      return db
+        .update(lists)
+        .set({ isTemporary })
+        .where(eq(lists.id, Number(id)))
+        .run();
+    },
+    onSuccess: () => {
+      Alert.alert('Succès', 'Statut temporaire mis à jour avec succès');
+    },
+    onError: (error) => {
+      Alert.alert('Erreur', 'Erreur lors de la mise à jour du statut temporaire');
+      console.error('Update temporary error:', error);
     },
   });
 
@@ -188,6 +207,26 @@ export default function EditTab() {
                 </Button>
               )}
             </nameForm.Subscribe>
+          </View>
+
+          <Divider spacing="lg" width={200} style={{ alignSelf: 'center' }} />
+
+          {/* Temporary Status Toggle */}
+          <View>
+            <VStack gap="sm">
+              <Text size="lg" weight="medium">
+                Type de liste
+              </Text>
+              <Switch
+                value={list?.isTemporary || false}
+                onValueChange={(value) => updateTemporaryMutation.mutate(value)}
+                label="Liste temporaire (événement ponctuel)"
+              />
+              <Text size="sm" color="muted">
+                Les listes temporaires nécessitent que tous les articles soient pris avant de
+                terminer la session de courses.
+              </Text>
+            </VStack>
           </View>
 
           <Divider spacing="lg" width={200} style={{ alignSelf: 'center' }} />

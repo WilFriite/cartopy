@@ -3,5 +3,5 @@ export const formatListItems = (items?: string | null) => {
   return items
     .split(',')
     .filter(Boolean)
-    .map(item => item.trim());
+    .map((item) => item.trim());
 };

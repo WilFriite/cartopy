@@ -30,9 +30,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon-logo-2.png",
     "userInterfaceStyle": "automatic",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.jukiyoomi.cartopy"
