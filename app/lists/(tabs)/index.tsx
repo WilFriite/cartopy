@@ -1,7 +1,6 @@
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useCallback } from 'react';
-import { Alert, FlatList, ScrollView, View } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Alert, FlatList, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import { Button, ButtonIcon, ButtonText } from '~/components/ui/btn';
 import { Card } from '~/components/ui/card';
@@ -92,39 +91,41 @@ export default function DisplayListsPage() {
   }, []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Container>
-        <Text size="xl" align="center">
-          Mes Listes
-        </Text>
-        {data.length > 0 ? (
-          <ScrollView style={{ flex: 1, height: '100%' }}>
-            <FlatList
-              data={data}
-              numColumns={1}
-              scrollEnabled={false}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => renderItem(item)}
-            />
-          </ScrollView>
-        ) : (
-          <View style={styles.emptyList}>
-            <Text size="lg">Aucune liste n&apos;existe pour le moment. 😕</Text>
-            <Link href="/lists/create" asChild>
-              <Button>
-                <ButtonIcon as={PlusCircle} />
-                <ButtonText>Ajouter une liste</ButtonText>
-              </Button>
-            </Link>
-          </View>
-        )}
-      </Container>
-    </GestureHandlerRootView>
+    <Container>
+      <Text size="xl" align="center">
+        Mes Listes
+      </Text>
+      {data.length > 0 ? (
+        <View style={{ flex: 1 }}>
+          <FlatList
+            contentContainerStyle={{
+              flex: 1,
+            }}
+            data={data}
+            numColumns={1}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => renderItem(item)}
+          />
+        </View>
+      ) : (
+        <View style={styles.emptyList}>
+          <Text size="lg">Aucune liste n&apos;existe pour le moment. 😕</Text>
+          <Link href="/lists/create" asChild>
+            <Button>
+              <ButtonIcon as={PlusCircle} />
+              <ButtonText>Ajouter une liste</ButtonText>
+            </Button>
+          </Link>
+        </View>
+      )}
+    </Container>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
   swipeable: {
+    width: '90%',
+    alignSelf: 'center',
     borderRadius: theme.borderRadius.xl,
     marginVertical: theme.spacing.md,
     shadowColor: theme.shadows.hard[1],
@@ -146,6 +147,7 @@ const styles = StyleSheet.create((theme) => ({
   },
   card: {
     marginVertical: 0,
+    width: '100%',
     borderRadius: theme.borderRadius.none,
   },
   emptyList: {
