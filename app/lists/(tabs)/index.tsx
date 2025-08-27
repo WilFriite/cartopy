@@ -16,6 +16,7 @@ import { Link, router } from 'expo-router';
 import { Eye, PlusCircle, Trash } from 'lucide-react-native';
 import { eq } from 'drizzle-orm';
 import { useMutation } from '@tanstack/react-query';
+import { FlashList } from '@shopify/flash-list';
 
 export default function DisplayListsPage() {
   const db = useDrizzle();
@@ -97,10 +98,9 @@ export default function DisplayListsPage() {
       </Text>
       {data.length > 0 ? (
         <View style={{ flex: 1 }}>
-          <FlatList
-            contentContainerStyle={{
-              flex: 1,
-            }}
+          <FlashList
+            contentContainerStyle={styles.listContainer}
+            style={{ flex: 1 }}
             data={data}
             numColumns={1}
             keyExtractor={(item) => item.id.toString()}
@@ -123,8 +123,11 @@ export default function DisplayListsPage() {
 }
 
 const styles = StyleSheet.create((theme) => ({
+  listContainer: {
+    paddingHorizontal: theme.spacing.lg,
+  },
   swipeable: {
-    width: '90%',
+    width: '100%',
     alignSelf: 'center',
     borderRadius: theme.borderRadius.xl,
     marginVertical: theme.spacing.md,
