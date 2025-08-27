@@ -61,21 +61,5 @@ In the output, you'll find options to open the app in a
 - 📱 Offline Functionality
   - Full offline support with local database
 
-### Planned Features
-
-- [ ] Smart suggestions based on purchase history
-- [ ] Possibility to add items with their quantities (in case of a specific recipe for example)
-- [ ] Barcode scanning for quick item addition
-- [ ] Voice input for adding items
-- [ ] Price tracking and comparison
-- [ ] Export/import functionality
-- [ ] Sync across devices (via a server)
-- [ ] Shopping categories and tags
-- [ ] Budget tracking
-- [ ] Shopping list sharing
-- [ ] QR code generation for sharing lists
-- [ ] Possibility to take photos of paper lists and import the items directly
-- [ ] Possibility to track logs of purchases (not sure of this one ngl)
-
 ## N.B.
 This is a project just for me to learn and experiment with new technologies. I'm trying to learn Expo with it. 
