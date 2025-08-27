@@ -4,7 +4,7 @@ import { Alert, FlatList, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import { Button, ButtonIcon, ButtonText } from '~/components/ui/btn';
 import { Card } from '~/components/ui/card';
-
+import { Image } from 'expo-image';
 import { Container } from '~/components/ui/container';
 import { HStack } from '~/components/ui/stack';
 import { SwipeableView } from '~/components/ui/swipeable-view';
@@ -110,6 +110,11 @@ export default function DisplayListsPage() {
       ) : (
         <View style={styles.emptyList}>
           <Text size="lg">Aucune liste n&apos;existe pour le moment. 😕</Text>
+          <Image
+            transition={1000}
+            source={require('~/assets/images/lost.gif')}
+            style={styles.emptyListImage}
+          />
           <Link href="/lists/create" asChild>
             <Button>
               <ButtonIcon as={PlusCircle} />
@@ -158,5 +163,11 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     gap: theme.spacing.md,
+  },
+  emptyListImage: {
+    width: '100%',
+    height: 400,
+    borderRadius: theme.borderRadius.xl,
+    alignSelf: 'center',
   },
 }));

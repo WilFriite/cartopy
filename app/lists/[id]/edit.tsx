@@ -1,4 +1,4 @@
-import { View, ScrollView, Alert } from 'react-native';
+import { View, ScrollView, Alert, KeyboardAvoidingView } from 'react-native';
 import { Text, ErrorText } from '~/components/ui/typography';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
@@ -145,7 +145,7 @@ export default function EditTab() {
             Édition de la liste
           </Text>
           {/* List Name Edit Form */}
-          <View>
+          <KeyboardAvoidingView behavior="height">
             <nameForm.Field
               name="name"
               asyncDebounceMs={300}
@@ -188,12 +188,12 @@ export default function EditTab() {
                 </Button>
               )}
             </nameForm.Subscribe>
-          </View>
+          </KeyboardAvoidingView>
 
           <Divider spacing="lg" width={200} style={{ alignSelf: 'center' }} />
 
           {/* Items Edit Form */}
-          <View>
+          <KeyboardAvoidingView behavior="height">
             <itemsForm.Field
               name="items"
               validators={{
@@ -231,7 +231,7 @@ export default function EditTab() {
                 </Button>
               )}
             </itemsForm.Subscribe>
-          </View>
+          </KeyboardAvoidingView>
         </VStack>
         <Divider spacing="lg" />
         <VStack gap="md">
