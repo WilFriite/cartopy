@@ -1,4 +1,4 @@
-import { View, ScrollView, Alert, KeyboardAvoidingView } from 'react-native';
+import { View, Alert } from 'react-native';
 import { Text, ErrorText } from '~/components/ui/typography';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
@@ -15,6 +15,8 @@ import { z } from 'zod';
 import { formatListItems } from '~/utils/format';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Divider } from '~/components/ui/divider';
+import { useKbdHeight } from '~/hooks/use-kbd-height';
+import { KeyboardAwareScrollView, KeyboardToolbar } from 'react-native-keyboard-controller';
 
 // Validation schemas
 const nameSchema = z
@@ -39,6 +41,7 @@ export default function EditTab() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const db = useDrizzle();
   const router = useRouter();
+  const { height } = useKbdHeight();
 
   const { data: list } = useLiveQuery(
     db.query.lists.findFirst({
@@ -138,14 +141,16 @@ export default function EditTab() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <VStack>
-        <VStack gap="lg">
+    <>
+      <KeyboardAwareScrollView
+        bottomOffset={Math.max(height.value + 10, 200)}
+        style={styles.container}>
+        <VStack>
           <Text size="lg" weight="bold" style={{ marginBottom: 16 }}>
             Édition de la liste
           </Text>
           {/* List Name Edit Form */}
-          <KeyboardAvoidingView behavior="height">
+          <View>
             <nameForm.Field
               name="name"
               asyncDebounceMs={300}
@@ -188,12 +193,12 @@ export default function EditTab() {
                 </Button>
               )}
             </nameForm.Subscribe>
-          </KeyboardAvoidingView>
+          </View>
 
           <Divider spacing="lg" width={200} style={{ alignSelf: 'center' }} />
 
           {/* Items Edit Form */}
-          <KeyboardAvoidingView behavior="height">
+          <View>
             <itemsForm.Field
               name="items"
               validators={{
@@ -231,19 +236,21 @@ export default function EditTab() {
                 </Button>
               )}
             </itemsForm.Subscribe>
-          </KeyboardAvoidingView>
+          </View>
+          <Divider spacing="lg" />
+          <VStack gap="md">
+            <Text size="lg" weight="bold" style={{ marginBottom: 16 }}>
+              Suppression de la liste
+            </Text>
+            <Button action="destructive" onPress={handleDeleteList}>
+              <ButtonText>Supprimer la liste</ButtonText>
+            </Button>
+          </VStack>
         </VStack>
-        <Divider spacing="lg" />
-        <VStack gap="md">
-          <Text size="lg" weight="bold" style={{ marginBottom: 16 }}>
-            Suppression de la liste
-          </Text>
-          <Button action="destructive" onPress={handleDeleteList}>
-            <ButtonText>Supprimer la liste</ButtonText>
-          </Button>
-        </VStack>
-      </VStack>
-    </ScrollView>
+        {/* <Animated.View style={[fakeView, { backgroundColor: 'red' }]} /> */}
+      </KeyboardAwareScrollView>
+      <KeyboardToolbar showArrows={false} insets={{ left: 16, right: 0 }} doneText="Fermer" />
+    </>
   );
 }
 
