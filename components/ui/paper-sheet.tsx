@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { type PropsWithChildren } from 'react';
-import { View, ScrollView, LayoutChangeEvent } from 'react-native';
+import { View, LayoutChangeEvent } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
 type Props = {
