@@ -1,16 +1,16 @@
-import { Stack, useLocalSearchParams } from 'expo-router';
-import { View, FlatList } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { View } from 'react-native';
 import { Text } from '~/components/ui/typography';
 import { Button, ButtonText } from '~/components/ui/btn';
 import { useDrizzle } from '~/hooks/use-drizzle';
 import { DateTime } from 'luxon';
-import { HStack, VStack } from '~/components/ui/stack';
+import { VStack } from '~/components/ui/stack';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { formatListItems } from '~/utils/format';
 import { StyleSheet } from 'react-native-unistyles';
 import { useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
 import type BottomSheet from '@gorhom/bottom-sheet';
 import { EditBottomSheet } from '~/components/ui/edit-bottom-sheet';
 
@@ -73,14 +73,14 @@ export default function ViewTab() {
           <View style={styles.itemsHeader}>
             <View style={styles.headerControls}>
               {it.length > 0 ? (
-                <HStack>
-                  <Text size="base" color="muted" align="center">
-                    {it.length} articles à acheter.
+                <VStack gap="sm" style={{ width: '100%' }}>
+                  <Text size="base" color="muted">
+                    {it.length} articles à acheter
                   </Text>
-                  <Button onPress={handleBottomSheetOpen} outlined style={styles.toggleButton}>
+                  <Button onPress={handleBottomSheetOpen} outlined>
                     <ButtonText>It&apos;s grocery timee! 🛒</ButtonText>
                   </Button>
-                </HStack>
+                </VStack>
               ) : null}
             </View>
           </View>

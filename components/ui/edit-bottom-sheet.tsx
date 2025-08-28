@@ -1,5 +1,5 @@
 import { CheckableListItem } from './checkable-list-item';
-import BottomSheet, { BottomSheetFlatList, BottomSheetFooter } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetFooter } from '@gorhom/bottom-sheet';
 import { StyleSheet } from 'react-native-unistyles';
 import { PaperUI } from './paper-sheet';
 import { useState, useEffect } from 'react';
@@ -15,6 +15,7 @@ import { wait } from '~/utils/wait';
 import { DateTime } from 'luxon';
 import { BaseBottomSheet } from './base-bottom-sheet';
 import { Check } from 'lucide-react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
 type Props = {
   listId: number;
@@ -91,7 +92,8 @@ export function EditBottomSheet({ listId, bottomSheetRef, handleSheetChanges, it
         showPercentage
       />
       <PaperUI>
-        <BottomSheetFlatList
+        <FlatList
+          showsVerticalScrollIndicator
           data={items}
           renderItem={({ item }) => (
             <CheckableListItem item={item} onItemToggle={handleItemToggle} />

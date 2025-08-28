@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useCallback } from 'react';
-import { Alert, FlatList, View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import { Button, ButtonIcon, ButtonText } from '~/components/ui/btn';
 import { Card } from '~/components/ui/card';
@@ -16,7 +16,7 @@ import { Link, router } from 'expo-router';
 import { Eye, PlusCircle, Trash } from 'lucide-react-native';
 import { eq } from 'drizzle-orm';
 import { useMutation } from '@tanstack/react-query';
-import { FlashList } from '@shopify/flash-list';
+import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function DisplayListsPage() {
   const db = useDrizzle();
@@ -97,8 +97,8 @@ export default function DisplayListsPage() {
         Mes Listes
       </Text>
       {data.length > 0 ? (
-        <View style={{ flex: 1 }}>
-          <FlashList
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <FlatList
             contentContainerStyle={styles.listContainer}
             style={{ flex: 1 }}
             data={data}
@@ -106,7 +106,7 @@ export default function DisplayListsPage() {
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => renderItem(item)}
           />
-        </View>
+        </GestureHandlerRootView>
       ) : (
         <View style={styles.emptyList}>
           <Text size="lg">Aucune liste n&apos;existe pour le moment. 😕</Text>
