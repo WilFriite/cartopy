@@ -133,16 +133,8 @@ const styles = StyleSheet.create((theme) => ({
   },
   swipeable: {
     width: '100%',
-    alignSelf: 'center',
-    borderRadius: theme.borderRadius.xl,
     marginVertical: theme.spacing.md,
-    shadowColor: theme.shadows.hard[1],
-    shadowOffset: {
-      height: 2,
-      width: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    borderRadius: theme.borderRadius.xl,
   },
   buttonGroup: {
     width: '100%',
