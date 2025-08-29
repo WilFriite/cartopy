@@ -45,11 +45,6 @@ export default function ListDetailsLayout() {
             backgroundColor: theme.colors.background,
           },
           headerShadowVisible: false,
-          headerLeft: () => (
-            <Link href={'/lists'} asChild>
-              <Icon as={ArrowLeftCircle} size={20} color="muted" />
-            </Link>
-          ),
           headerTintColor: theme.colors.astral,
         }}
       />
