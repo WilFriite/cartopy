@@ -4,7 +4,7 @@ import { Text } from '~/components/ui/typography';
 import { Button, ButtonText } from '~/components/ui/btn';
 import { useDrizzle } from '~/hooks/use-drizzle';
 import { DateTime } from 'luxon';
-import { VStack } from '~/components/ui/stack';
+import { HStack, VStack } from '~/components/ui/stack';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { formatListItems } from '~/utils/format';
 import { StyleSheet } from 'react-native-unistyles';
@@ -43,14 +43,6 @@ export default function ViewTab() {
       })
     : null;
 
-  const createdAt = DateTime.fromJSDate(new Date(list?.createdAt || ''))
-    .setLocale('fr')
-    .toLocaleString({
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-
   const handleBottomSheetOpen = () => {
     bottomSheetRef.current?.expand();
   };
@@ -59,14 +51,14 @@ export default function ViewTab() {
     <GestureHandlerRootView style={styles.container}>
       <SafeAreaView edges={['left', 'right']} style={styles.contentPadding}>
         {/* Last Performed Section */}
-        <View style={styles.sectionContainer}>
-          <Text size="lg" weight="bold" style={styles.sectionTitle}>
-            Dernière utilisation
+        <HStack style={styles.sectionContainer} align="center" gap="md">
+          <Text size="lg" weight="bold">
+            Dernière utilisation :
           </Text>
-          <Text size="base" color="muted">
-            {lastPerformedAt ? lastPerformedAt : "Cette liste n'a jamais été utilisée"}
+          <Text size="sm" color="muted">
+            {lastPerformedAt ? lastPerformedAt : 'jamais utilisée'}
           </Text>
-        </View>
+        </HStack>
 
         {/* Items Section */}
         <VStack gap="none" style={[styles.sectionContainer, { flex: 1 }]}>
@@ -113,13 +105,6 @@ export default function ViewTab() {
           )}
         </VStack>
 
-        {/* Created Date */}
-        <View style={styles.sectionContainer}>
-          <Text size="sm" color="muted">
-            Créée le {createdAt}
-          </Text>
-        </View>
-
         <EditBottomSheet listId={Number(id)} bottomSheetRef={bottomSheetRef} it={it} />
       </SafeAreaView>
     </GestureHandlerRootView>
@@ -137,7 +122,7 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingHorizontal: theme.spacing.xl,
   },
   sectionContainer: {
-    paddingVertical: theme.spacing.xl,
+    paddingVertical: theme.spacing.lg,
   },
   sectionTitle: {
     marginBottom: theme.spacing.md,
