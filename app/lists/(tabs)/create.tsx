@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import { Platform } from 'react-native';
 import { Button, ButtonText } from '~/components/ui/btn';
 
 import { Container } from '~/components/ui/container';
@@ -13,6 +14,8 @@ import { useDrizzle } from '~/hooks/use-drizzle';
 import { VStack } from '~/components/ui/stack';
 import { sql } from 'drizzle-orm';
 import { formatListItems } from '~/utils/format';
+import { KeyboardAvoidingView, KeyboardToolbar } from 'react-native-keyboard-controller';
+import { useKbdHeight } from '~/hooks/use-kbd-height';
 
 const defaultValues: ListInsertType = {
   name: '',
@@ -39,6 +42,8 @@ const itemsSchema = z
 
 export default function CreateListPage() {
   const db = useDrizzle();
+  const { height } = useKbdHeight();
+
   const saveUserMutation = useMutation({
     mutationFn: async (value: ListInsertType) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -68,75 +73,81 @@ export default function CreateListPage() {
         <Text size="xl" align="center">
           Création
         </Text>
-        <VStack gap="lg">
-          <form.Field
-            name="name"
-            asyncDebounceMs={300}
-            validators={{
-              onChange: nameSchema,
-              onChangeAsync: async ({ value, fieldApi }) => {
-                const found = await db.query.lists.findFirst({
-                  where: (lists, { eq, like }) =>
-                    like(sql`lower(${lists.name})`, value.toLowerCase()),
-                });
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={height.value + 30}
+          style={{ flex: 1 }}>
+          <VStack justify="between">
+            <form.Field
+              name="name"
+              asyncDebounceMs={300}
+              validators={{
+                onChange: nameSchema,
+                onChangeAsync: async ({ value, fieldApi }) => {
+                  const found = await db.query.lists.findFirst({
+                    where: (lists, { eq, like }) =>
+                      like(sql`lower(${lists.name})`, value.toLowerCase()),
+                  });
 
-                if (found) return { message: 'Ce nom de liste est déjà pris' };
-                return null;
-              },
-            }}>
-            {(field) => (
-              <VStack>
-                <Input
-                  label="Nom de la liste"
-                  size="lg"
-                  id={field.name}
-                  value={field.state.value}
-                  onChangeText={field.handleChange}
-                  isError={field.state.meta.errors.length > 0}
-                />
-                {field.state.meta.errors.length > 0 ? (
-                  <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
-                ) : null}
-              </VStack>
-            )}
-          </form.Field>
+                  if (found) return { message: 'Ce nom de liste est déjà pris' };
+                  return null;
+                },
+              }}>
+              {(field) => (
+                <VStack>
+                  <Input
+                    label="Nom de la liste"
+                    size="lg"
+                    id={field.name}
+                    value={field.state.value}
+                    onChangeText={field.handleChange}
+                    isError={field.state.meta.errors.length > 0}
+                  />
+                  {field.state.meta.errors.length > 0 ? (
+                    <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
+                  ) : null}
+                </VStack>
+              )}
+            </form.Field>
 
-          <form.Field
-            name="items"
-            validators={{
-              onChange: itemsSchema,
-            }}>
-            {(field) => (
-              <VStack>
-                <Textarea
-                  label="Articles à ajouter"
-                  size="md"
-                  helperText="Séparés par des virgules… (ex: Pain, Lait, Œufs)"
-                  id={field.name}
-                  value={field.state.value || ''}
-                  onBlur={field.handleBlur}
-                  onChangeText={field.handleChange}
-                  isError={field.state.meta.errors.length > 0}
-                />
-                {field.state.meta.errors.length > 0 ? (
-                  <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
-                ) : null}
-              </VStack>
-            )}
-          </form.Field>
-          <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-            {([canSubmit, isSubmitting]) => (
-              <Button
-                action="normal"
-                isLoading={isSubmitting}
-                disabled={!canSubmit}
-                onPress={form.handleSubmit}>
-                <ButtonText>Créer</ButtonText>
-              </Button>
-            )}
-          </form.Subscribe>
-        </VStack>
+            <form.Field
+              name="items"
+              validators={{
+                onChange: itemsSchema,
+              }}>
+              {(field) => (
+                <VStack>
+                  <Textarea
+                    label="Articles à ajouter"
+                    size="md"
+                    helperText="Séparés par des virgules… (ex: Pain, Lait, Œufs)"
+                    id={field.name}
+                    value={field.state.value || ''}
+                    onBlur={field.handleBlur}
+                    onChangeText={field.handleChange}
+                    isError={field.state.meta.errors.length > 0}
+                  />
+                  {field.state.meta.errors.length > 0 ? (
+                    <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
+                  ) : null}
+                </VStack>
+              )}
+            </form.Field>
+            <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+              {([canSubmit, isSubmitting]) => (
+                <Button
+                  action="normal"
+                  isLoading={isSubmitting}
+                  disabled={!canSubmit}
+                  onPress={form.handleSubmit}>
+                  <ButtonText>Créer</ButtonText>
+                </Button>
+              )}
+            </form.Subscribe>
+          </VStack>
+        </KeyboardAvoidingView>
       </Container>
+      <KeyboardToolbar showArrows={false} insets={{ left: 16, right: 0 }} doneText="Fermer" />
     </>
   );
 }
