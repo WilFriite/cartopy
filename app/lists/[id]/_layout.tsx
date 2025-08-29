@@ -3,13 +3,13 @@ import {
   MaterialTopTabNavigationEventMap,
   MaterialTopTabNavigationOptions,
 } from '@react-navigation/material-top-tabs';
-import { Link, Stack, useLocalSearchParams, withLayoutContext } from 'expo-router';
+import { Stack, useLocalSearchParams, withLayoutContext } from 'expo-router';
 import { ParamListBase, TabNavigationState } from '@react-navigation/native';
 import { useUnistyles } from 'react-native-unistyles';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useDrizzle } from '~/hooks/use-drizzle';
 import { Icon } from '~/components/ui/icon';
-import { ArrowLeftCircle, Edit, Eye } from 'lucide-react-native';
+import { Edit, Eye } from 'lucide-react-native';
 
 const { Navigator } = createMaterialTopTabNavigator();
 
