@@ -1,6 +1,6 @@
 import { useSegments } from 'expo-router';
 import React, { useEffect, type PropsWithChildren } from 'react';
-import type { ViewProps } from 'react-native';
+import { View, type ViewProps } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -131,20 +131,22 @@ export const SwipeableView = ({
   }, [segments]);
 
   return (
-    <GestureHandlerRootView style={[styles.container, style]}>
-      {/* Hidden pan to be revealed when swiping */}
-      <Animated.View style={[styles.hiddenPanBase, hiddenPanSideStyle, hiddenPanAnimatedStyle]}>
-        {hiddenPan}
-      </Animated.View>
-
-      {/* Main content with swipe gesture */}
-      <Animated.View style={[styles.hintBar(direction), hintBarStyle]} />
-      <GestureDetector gesture={Gesture.Exclusive(panGesture, resetGesture)}>
-        <Animated.View style={[styles.mainContent(direction), animatedStyle]}>
-          {children}
+    <View style={[styles.container, style]}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        {/* Hidden pan to be revealed when swiping */}
+        <Animated.View style={[styles.hiddenPanBase, hiddenPanSideStyle, hiddenPanAnimatedStyle]}>
+          {hiddenPan}
         </Animated.View>
-      </GestureDetector>
-    </GestureHandlerRootView>
+
+        {/* Main content with swipe gesture */}
+        <Animated.View style={[styles.hintBar(direction), hintBarStyle]} />
+        <GestureDetector gesture={Gesture.Exclusive(panGesture, resetGesture)}>
+          <Animated.View style={[styles.mainContent(direction), animatedStyle]}>
+            {children}
+          </Animated.View>
+        </GestureDetector>
+      </GestureHandlerRootView>
+    </View>
   );
 };
 const styles = StyleSheet.create((theme) => ({
