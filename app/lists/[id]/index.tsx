@@ -10,7 +10,7 @@ import { formatListItems } from '~/utils/format';
 import { StyleSheet } from 'react-native-unistyles';
 import { useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 import type BottomSheet from '@gorhom/bottom-sheet';
 import { EditBottomSheet } from '~/components/ui/edit-bottom-sheet';
 
@@ -48,7 +48,7 @@ export default function ViewTab() {
   };
 
   return (
-    <GestureHandlerRootView style={styles.container}>
+    <View style={styles.container}>
       <SafeAreaView edges={['left', 'right']} style={styles.contentPadding}>
         {/* Last Performed Section */}
         <HStack style={styles.sectionContainer} align="center" gap="md">
@@ -107,7 +107,7 @@ export default function ViewTab() {
 
         <EditBottomSheet listId={Number(id)} bottomSheetRef={bottomSheetRef} it={it} />
       </SafeAreaView>
-    </GestureHandlerRootView>
+    </View>
   );
 }
 

@@ -16,7 +16,7 @@ import { Link, router } from 'expo-router';
 import { Eye, PlusCircle, Trash } from 'lucide-react-native';
 import { eq } from 'drizzle-orm';
 import { useMutation } from '@tanstack/react-query';
-import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 
 export default function DisplayListsPage() {
   const db = useDrizzle();
@@ -97,16 +97,14 @@ export default function DisplayListsPage() {
         Mes Listes
       </Text>
       {data.length > 0 ? (
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <FlatList
-            contentContainerStyle={styles.listContainer}
-            style={{ flex: 1 }}
-            data={data}
-            numColumns={1}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => renderItem(item)}
-          />
-        </GestureHandlerRootView>
+        <FlatList
+          contentContainerStyle={styles.listContainer}
+          style={{ flex: 1 }}
+          data={data}
+          numColumns={1}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => renderItem(item)}
+        />
       ) : (
         <View style={styles.emptyList}>
           <Text size="lg">Aucune liste n&apos;existe pour le moment. 😕</Text>
