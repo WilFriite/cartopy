@@ -87,27 +87,42 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
   // Pan gesture handler
   const panGesture = Gesture.Pan()
     .enabled(!disabled && !isLoading)
+    .minDistance(5) // Add minimum distance to prevent accidental triggers
+    .minPointers(1)
+    .maxPointers(1)
+    .onBegin(() => {
+      console.log('SwipeButton: Gesture began');
+    })
     .onUpdate((event) => {
       // Only allow rightward movement
       const newTranslateX = Math.max(0, Math.min(event.translationX, maxTranslateX));
       translateX.value = newTranslateX;
+      console.log('SwipeButton: Gesture update', {
+        translationX: event.translationX,
+        newTranslateX,
+      });
     })
     .onEnd((event) => {
       const progress = translateX.value / maxTranslateX;
       const velocity = event.velocityX;
+      console.log('SwipeButton: Gesture end', { progress, velocity, maxTranslateX });
 
       // Check if swipe is complete (threshold: 80% or high velocity)
       if (progress > 0.8 || (progress > 0.5 && velocity > 500)) {
+        console.log('SwipeButton: Completing swipe');
         // Complete the swipe
         translateX.value = withTiming(maxTranslateX, { duration: 200 });
         isCompleted.value = true;
         handleSwipeComplete();
       } else {
+        console.log('SwipeButton: Resetting swipe');
         // Reset to start
         translateX.value = withSpring(0, { damping: 15, stiffness: 150 });
       }
     })
-    .runOnJS(true);
+    .runOnJS(true)
+    .shouldCancelWhenOutside(true)
+    .activateAfterLongPress(0); // Remove any long press delay
 
   // Animated styles for the sliding button
   const buttonAnimatedStyle = useAnimatedStyle(() => {
@@ -171,7 +186,7 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
               <Text size="base" weight="medium" style={styles.text}>
                 {text}
               </Text>
-              <Icon as={ArrowRight} size={16} color="muted" />
+              <Icon as={ArrowRight} size={24} color="muted" />
             </>
           ) : (
             <Text size="base" weight="medium" style={styles.text}>
@@ -190,7 +205,12 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
                 height: buttonSize,
               },
               buttonAnimatedStyle,
-            ]}>
+            ]}
+            // Android-specific touch optimizations
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Swipe button">
             <Animated.View style={iconAnimatedStyle}>
               {isLoading ? (
                 <ActivityIndicator size="small" color={theme.colors.white} />
@@ -200,9 +220,6 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
             </Animated.View>
           </Animated.View>
         </GestureDetector>
-
-        {/* Track indicator */}
-        <View style={[styles.track, { width: maxTranslateX }]} />
       </Animated.View>
     </View>
   );
@@ -280,6 +297,9 @@ const styles = StyleSheet.create((theme) => ({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    // Android-specific optimizations for better touch handling
+    minHeight: 44, // Minimum touch target size for Android
+    minWidth: 44,
     variants: {
       variant: {
         normal: {
@@ -296,13 +316,5 @@ const styles = StyleSheet.create((theme) => ({
         false: {},
       },
     },
-  },
-
-  track: {
-    position: 'absolute',
-    left: 4,
-    height: 2,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 1,
   },
 }));
