@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { View, ViewProps, ActivityIndicator } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { ViewProps, ActivityIndicator } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -70,8 +70,8 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
 
   // Calculate dimensions
   const buttonSize = 52; // Fixed button size
-  const containerWidth = 280; // Default container width
-  const maxTranslateX = containerWidth - buttonSize - 8; // Account for margins
+  const [containerWidth, setContainerWidth] = useState(0); // Default container width
+  const maxTranslateX = Math.abs(Math.floor(containerWidth * 0.7) - buttonSize - 8); // Account for margins
 
   const handleSwipeComplete = useCallback(() => {
     if (!disabled && !isLoading) {
@@ -176,7 +176,13 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
   });
 
   return (
-    <Animated.View style={[styles.container, containerAnimatedStyle, style]} {...props}>
+    <Animated.View
+      style={[styles.container, containerAnimatedStyle, style]}
+      onLayout={(event) => {
+        const { width } = event.nativeEvent.layout;
+        setContainerWidth(width);
+      }}
+      {...props}>
       {/* Text */}
       <Animated.View style={[styles.textContainer, textAnimatedStyle]}>
         {!isLoading ? (
