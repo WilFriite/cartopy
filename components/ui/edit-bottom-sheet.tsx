@@ -26,7 +26,7 @@ type Props = {
 
 export function EditBottomSheet({ listId, bottomSheetRef, handleSheetChanges, it }: Props) {
   const [items, setItems] = useState(it);
-  const snapPoints = ['75%'];
+  const snapPoints = ['75%', '95%'];
   const db = useDrizzle();
 
   const checkedPercentage = (items.filter((item) => item.completed).length / items.length) * 100;

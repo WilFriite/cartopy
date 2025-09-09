@@ -44,7 +44,7 @@ export default function ViewTab() {
     : null;
 
   const handleBottomSheetOpen = () => {
-    bottomSheetRef.current?.expand();
+    bottomSheetRef.current?.snapToIndex(1);
   };
 
   return (
