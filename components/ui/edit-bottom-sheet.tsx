@@ -71,11 +71,11 @@ export function EditBottomSheet({ listId, bottomSheetRef, handleSheetChanges, it
       bottomSheetRef={bottomSheetRef}
       handleSheetChanges={handleSheetChanges}
       footerComponent={(props) => (
-        <BottomSheetFooter {...props}>
+        <BottomSheetFooter style={styles.footer} {...props}>
           <SwipeButton
             disabled={checkedPercentage <= 0}
             isLoading={updateItemsMutation.isPending}
-            style={styles.swipeButton}
+            style={styles.button}
             text="Swipe to save"
             icon={Check}
             variant="normal"
@@ -86,6 +86,7 @@ export function EditBottomSheet({ listId, bottomSheetRef, handleSheetChanges, it
         </BottomSheetFooter>
       )}>
       <ProgressBar
+        style={styles.progressBar}
         progress={checkedPercentage}
         duration={1000}
         easing={Easing.bounce}
@@ -106,8 +107,15 @@ export function EditBottomSheet({ listId, bottomSheetRef, handleSheetChanges, it
 }
 
 const styles = StyleSheet.create((theme) => ({
-  swipeButton: {
+  button: {
     width: '95%',
     alignSelf: 'center',
+  },
+  progressBar: {
+    width: '95%',
+    alignSelf: 'center',
+  },
+  footer: {
+    paddingVertical: theme.spacing.xl,
   },
 }));
