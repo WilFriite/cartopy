@@ -176,62 +176,56 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
   });
 
   return (
-    <View style={[styles.wrapper, style]} {...props}>
-      <Animated.View style={[styles.container, containerAnimatedStyle]}>
-        {/* Text */}
-        <Animated.View style={[styles.textContainer, textAnimatedStyle]}>
-          {!isLoading ? (
-            <>
-              <Text size="base" weight="medium" style={styles.text}>
-                {text}
-              </Text>
-              <Icon as={ArrowRight} size={24} color="muted" />
-            </>
-          ) : (
+    <Animated.View style={[styles.container, containerAnimatedStyle, style]} {...props}>
+      {/* Text */}
+      <Animated.View style={[styles.textContainer, textAnimatedStyle]}>
+        {!isLoading ? (
+          <>
             <Text size="base" weight="medium" style={styles.text}>
-              Chargement en cours…
+              {text}
             </Text>
-          )}
-        </Animated.View>
-
-        {/* Sliding Button */}
-        <GestureDetector gesture={panGesture}>
-          <Animated.View
-            style={[
-              styles.button,
-              {
-                width: buttonSize,
-                height: buttonSize,
-              },
-              buttonAnimatedStyle,
-            ]}
-            // Android-specific touch optimizations
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            accessible={true}
-            accessibilityRole="button"
-            accessibilityLabel="Swipe button">
-            <Animated.View style={iconAnimatedStyle}>
-              {isLoading ? (
-                <ActivityIndicator size="small" color={theme.colors.white} />
-              ) : (
-                <Icon as={icon} size={20} color="white" />
-              )}
-            </Animated.View>
-          </Animated.View>
-        </GestureDetector>
+            <Icon as={ArrowRight} size={24} color="muted" />
+          </>
+        ) : (
+          <Text size="base" weight="medium" style={styles.text}>
+            Chargement en cours…
+          </Text>
+        )}
       </Animated.View>
-    </View>
+
+      {/* Sliding Button */}
+      <GestureDetector gesture={panGesture}>
+        <Animated.View
+          style={[
+            styles.button,
+            {
+              width: buttonSize,
+              height: buttonSize,
+            },
+            buttonAnimatedStyle,
+          ]}
+          // Android-specific touch optimizations
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Swipe button">
+          <Animated.View style={iconAnimatedStyle}>
+            {isLoading ? (
+              <ActivityIndicator size="small" color={theme.colors.white} />
+            ) : (
+              <Icon as={icon} size={20} color="white" />
+            )}
+          </Animated.View>
+        </Animated.View>
+      </GestureDetector>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create((theme) => ({
-  wrapper: {
-    width: 280,
-    height: 60,
-  },
   container: {
     width: '100%',
-    height: '100%',
+    height: 60,
     borderRadius: theme.borderRadius.full,
     borderWidth: 2,
     position: 'relative',
