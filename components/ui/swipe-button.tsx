@@ -117,11 +117,10 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
       } else {
         console.log('SwipeButton: Resetting swipe');
         // Reset to start
-        translateX.value = withSpring(0, { damping: 15, stiffness: 150 });
+        translateX.value = withSpring(0, { damping: 50, stiffness: 150 });
       }
     })
     .runOnJS(true)
-    .shouldCancelWhenOutside(true)
     .activateAfterLongPress(0); // Remove any long press delay
 
   // Animated styles for the sliding button
