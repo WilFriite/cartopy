@@ -125,8 +125,21 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
 
   // Animated styles for the sliding button
   const buttonAnimatedStyle = useAnimatedStyle(() => {
+    const progress = translateX.value / maxTranslateX;
+
+    const borderColor = interpolateColor(
+      progress,
+      [0, 0.5, 1],
+      [
+        theme.colors.astral,
+        variant === 'destructive' ? theme.colors.crimson + '20' : theme.colors.outline + '20',
+        variant === 'destructive' ? theme.colors.crimson : theme.colors.outline,
+      ]
+    );
+
     return {
-      transform: [{ translateX: translateX.value }],
+      transform: [{ translateX: translateX.value }, { rotate: `${progress * 360}deg` }],
+      borderColor,
     };
   });
 
@@ -286,6 +299,7 @@ const styles = StyleSheet.create((theme) => ({
     position: 'absolute',
     left: 4,
     borderRadius: theme.borderRadius.full,
+    borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 3,
