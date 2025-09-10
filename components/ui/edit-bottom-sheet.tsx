@@ -79,7 +79,7 @@ export function EditBottomSheet({ listId, bottomSheetRef, handleSheetChanges, it
             text="Swipe to save"
             icon={Check}
             variant="normal"
-            onSwipeComplete={() => {
+            onSwipeComplete={async () => {
               updateItemsMutation.mutateAsync(remainingItems.map((item) => item.name).join(', '));
             }}
           />
