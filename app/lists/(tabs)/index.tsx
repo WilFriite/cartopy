@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Alert, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import { Button, ButtonIcon, ButtonText } from '~/components/ui/btn';
@@ -12,11 +12,22 @@ import { Text } from '~/components/ui/typography';
 import { lists, ListSelectType } from '~/db/schema';
 import { useDrizzle } from '~/hooks/use-drizzle';
 import { formatListItems } from '~/utils/format';
-import { Link, router } from 'expo-router';
-import { Eye, PlusCircle, Trash } from 'lucide-react-native';
+import { Link, router, useRouter } from 'expo-router';
+import { Eye, Plus, PlusCircle, Trash } from 'lucide-react-native';
 import { eq } from 'drizzle-orm';
 import { useMutation } from '@tanstack/react-query';
 import { FlatList } from 'react-native-gesture-handler';
+import {
+  Easing,
+  useAnimatedReaction,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
+
+import Transition, { useScreenAnimation } from 'react-native-screen-transitions';
+import { Icon } from '~/components/ui/icon';
 
 export default function DisplayListsPage() {
   const db = useDrizzle();
@@ -121,7 +132,90 @@ export default function DisplayListsPage() {
           </Link>
         </View>
       )}
+      <AddListButton />
     </Container>
+  );
+}
+
+function AddListButton() {
+  const screenProps = useScreenAnimation();
+  const scale = useSharedValue(1);
+  const router = useRouter();
+
+  const boundId = 'add-list';
+
+  const animatedContainerStyle = useAnimatedStyle(() => {
+    'worklet';
+
+    if (screenProps.value.activeBoundId === boundId) return {};
+
+    return {
+      transform: [
+        {
+          scale: scale.value,
+        },
+      ],
+    };
+  });
+
+  useAnimatedReaction(
+    () => screenProps.value,
+    (props) => {
+      const forRoute = 'create2';
+      console.log('props1', props.next?.route.name);
+      if (props.next?.route.name !== forRoute) return;
+      console.log('props2');
+      if (props.next?.closing === undefined) {
+        console.log('undefined');
+        scale.value = withSpring(1);
+        return;
+      }
+      if (props.next.closing === 0) {
+        console.log('closing 0');
+        scale.value = withTiming(0, {
+          duration: 1000,
+          easing: Easing.bezierFn(0.19, 1, 0.22, 1),
+        });
+      } else if (props.next.closing === 1) {
+        console.log('closing 1');
+        scale.value = withTiming(1, {
+          duration: 1000,
+          easing: Easing.bezierFn(0.19, 1, 0.22, 1),
+        });
+      }
+    }
+  );
+
+  const onPress = () => {
+    console.log('onPress');
+    router.push({
+      pathname: '/lists/(tabs)/create2',
+      params: {
+        sharedBoundTag: boundId,
+      },
+    });
+  };
+  return (
+    <Transition.Pressable
+      sharedBoundTag={boundId}
+      onPress={onPress}
+      style={[styles.button, animatedContainerStyle]}>
+      <Icon as={Plus} size={20} color="white" />
+    </Transition.Pressable>
+  );
+  return (
+    <Link href="/lists/create2" asChild>
+      {/* <Transition.Pressable
+        sharedBoundTag={boundId}
+        onPress={onPress}
+        style={[animatedContainerStyle, styles.button]}
+      > */}
+      <Button style={styles.button}>
+        <ButtonIcon as={Plus} />
+      </Button>
+      {/* <Icon as={Plus} size={30} color="white" /> */}
+      {/* </Transition.Pressable> */}
+    </Link>
   );
 }
 
@@ -159,5 +253,16 @@ const styles = StyleSheet.create((theme) => ({
     height: 400,
     borderRadius: theme.borderRadius.xl,
     alignSelf: 'center',
+  },
+  button: {
+    height: 60,
+    aspectRatio: 1,
+    alignItems: 'center',
+    alignSelf: 'flex-end',
+    marginBottom: theme.spacing.sm,
+    marginRight: theme.spacing.sm,
+    justifyContent: 'center',
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: theme.colors.astral,
   },
 }));
