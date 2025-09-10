@@ -38,8 +38,11 @@ export default function Layout() {
           headerStyle: {
             backgroundColor: theme.colors.background,
           },
-        }}
-      />
+        }}>
+        <Stack.Screen name="lists/(tabs)" />
+        <Stack.Screen name="lists/[id]" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="+not-found" />
+      </Stack>
     </Providers>
   );
 }
