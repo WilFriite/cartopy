@@ -26,7 +26,7 @@ type Props = {
 
 export function EditBottomSheet({ listId, bottomSheetRef, handleSheetChanges, it }: Props) {
   const [items, setItems] = useState(it);
-  const snapPoints = ['75%'];
+  const snapPoints = ['75%', '95%'];
   const db = useDrizzle();
 
   const checkedPercentage = (items.filter((item) => item.completed).length / items.length) * 100;
@@ -71,21 +71,22 @@ export function EditBottomSheet({ listId, bottomSheetRef, handleSheetChanges, it
       bottomSheetRef={bottomSheetRef}
       handleSheetChanges={handleSheetChanges}
       footerComponent={(props) => (
-        <BottomSheetFooter {...props}>
+        <BottomSheetFooter style={styles.footer} {...props}>
           <SwipeButton
             disabled={checkedPercentage <= 0}
             isLoading={updateItemsMutation.isPending}
-            style={styles.swipeButton}
+            style={styles.button}
             text="Swipe to save"
             icon={Check}
             variant="normal"
-            onSwipeComplete={() => {
+            onSwipeComplete={async () => {
               updateItemsMutation.mutateAsync(remainingItems.map((item) => item.name).join(', '));
             }}
           />
         </BottomSheetFooter>
       )}>
       <ProgressBar
+        style={styles.progressBar}
         progress={checkedPercentage}
         duration={1000}
         easing={Easing.bounce}
@@ -106,8 +107,15 @@ export function EditBottomSheet({ listId, bottomSheetRef, handleSheetChanges, it
 }
 
 const styles = StyleSheet.create((theme) => ({
-  swipeButton: {
+  button: {
     width: '95%',
     alignSelf: 'center',
+  },
+  progressBar: {
+    width: '95%',
+    alignSelf: 'center',
+  },
+  footer: {
+    paddingVertical: theme.spacing.xl,
   },
 }));

@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { View, ViewProps, ActivityIndicator } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { ViewProps, ActivityIndicator, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -19,7 +19,7 @@ import { ArrowRight } from 'lucide-react-native';
  */
 interface SwipeButtonProps extends ViewProps {
   /** Callback function to execute when swipe is completed */
-  onSwipeComplete: () => void;
+  onSwipeComplete: () => Promise<void>;
   /** Text to display in the button */
   text?: string;
   /** Icon to display in the swipeable button */
@@ -70,8 +70,8 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
 
   // Calculate dimensions
   const buttonSize = 52; // Fixed button size
-  const containerWidth = 280; // Default container width
-  const maxTranslateX = containerWidth - buttonSize - 8; // Account for margins
+  const [containerWidth, setContainerWidth] = useState(0); // Default container width
+  const maxTranslateX = Math.abs(Math.floor(containerWidth * 0.7) - buttonSize - 8); // Account for margins
 
   const handleSwipeComplete = useCallback(() => {
     if (!disabled && !isLoading) {
@@ -87,32 +87,59 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
   // Pan gesture handler
   const panGesture = Gesture.Pan()
     .enabled(!disabled && !isLoading)
+    .minDistance(5) // Add minimum distance to prevent accidental triggers
+    .minPointers(1)
+    .maxPointers(1)
+    .onBegin(() => {
+      console.log('SwipeButton: Gesture began');
+    })
     .onUpdate((event) => {
       // Only allow rightward movement
       const newTranslateX = Math.max(0, Math.min(event.translationX, maxTranslateX));
       translateX.value = newTranslateX;
+      console.log('SwipeButton: Gesture update', {
+        translationX: event.translationX,
+        newTranslateX,
+      });
     })
     .onEnd((event) => {
       const progress = translateX.value / maxTranslateX;
       const velocity = event.velocityX;
+      console.log('SwipeButton: Gesture end', { progress, velocity, maxTranslateX });
 
       // Check if swipe is complete (threshold: 80% or high velocity)
       if (progress > 0.8 || (progress > 0.5 && velocity > 500)) {
+        console.log('SwipeButton: Completing swipe');
         // Complete the swipe
-        translateX.value = withTiming(maxTranslateX, { duration: 200 });
+        translateX.value = withTiming(maxTranslateX, { duration: 10 });
         isCompleted.value = true;
         handleSwipeComplete();
       } else {
+        console.log('SwipeButton: Resetting swipe');
         // Reset to start
-        translateX.value = withSpring(0, { damping: 15, stiffness: 150 });
+        translateX.value = withSpring(0, { damping: 50, stiffness: 150 });
       }
     })
-    .runOnJS(true);
+    .runOnJS(true)
+    .activateAfterLongPress(0); // Remove any long press delay
 
   // Animated styles for the sliding button
   const buttonAnimatedStyle = useAnimatedStyle(() => {
+    const progress = translateX.value / maxTranslateX;
+
+    const borderColor = interpolateColor(
+      progress,
+      [0, 0.5, 1],
+      [
+        theme.colors.astral,
+        variant === 'destructive' ? theme.colors.crimson + '20' : theme.colors.outline + '20',
+        variant === 'destructive' ? theme.colors.crimson : theme.colors.outline,
+      ]
+    );
+
     return {
       transform: [{ translateX: translateX.value }],
+      borderColor,
     };
   });
 
@@ -145,16 +172,6 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
     };
   });
 
-  // Animated styles for the icon
-  const iconAnimatedStyle = useAnimatedStyle(() => {
-    const progress = translateX.value / maxTranslateX;
-    const scale = interpolate(progress, [0.7, 1], [1, 1.2], 'clamp');
-
-    return {
-      transform: [{ scale }],
-    };
-  });
-
   // Use stylesheet variants for styling
   styles.useVariants({
     variant,
@@ -162,60 +179,62 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
   });
 
   return (
-    <View style={[styles.wrapper, style]} {...props}>
-      <Animated.View style={[styles.container, containerAnimatedStyle]}>
-        {/* Text */}
-        <Animated.View style={[styles.textContainer, textAnimatedStyle]}>
-          {!isLoading ? (
-            <>
-              <Text size="base" weight="medium" style={styles.text}>
-                {text}
-              </Text>
-              <Icon as={ArrowRight} size={16} color="muted" />
-            </>
-          ) : (
+    <Animated.View
+      style={[styles.container, containerAnimatedStyle, style]}
+      onLayout={(event) => {
+        const { width } = event.nativeEvent.layout;
+        setContainerWidth(width);
+      }}
+      {...props}>
+      {/* Text */}
+      <Animated.View style={[styles.textContainer, textAnimatedStyle]}>
+        {!isLoading ? (
+          <>
             <Text size="base" weight="medium" style={styles.text}>
-              Chargement en cours…
+              {text}
             </Text>
-          )}
-        </Animated.View>
-
-        {/* Sliding Button */}
-        <GestureDetector gesture={panGesture}>
-          <Animated.View
-            style={[
-              styles.button,
-              {
-                width: buttonSize,
-                height: buttonSize,
-              },
-              buttonAnimatedStyle,
-            ]}>
-            <Animated.View style={iconAnimatedStyle}>
-              {isLoading ? (
-                <ActivityIndicator size="small" color={theme.colors.white} />
-              ) : (
-                <Icon as={icon} size={20} color="white" />
-              )}
-            </Animated.View>
-          </Animated.View>
-        </GestureDetector>
-
-        {/* Track indicator */}
-        <View style={[styles.track, { width: maxTranslateX }]} />
+            <Icon as={ArrowRight} size={24} color="muted" />
+          </>
+        ) : (
+          <Text size="base" weight="medium" style={styles.text}>
+            Chargement en cours…
+          </Text>
+        )}
       </Animated.View>
-    </View>
+
+      {/* Sliding Button */}
+      <GestureDetector gesture={panGesture}>
+        <Animated.View
+          style={[
+            styles.button,
+            {
+              width: buttonSize,
+              height: buttonSize,
+            },
+            buttonAnimatedStyle,
+          ]}
+          // Android-specific touch optimizations
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Swipe button">
+          <View>
+            {isLoading ? (
+              <ActivityIndicator size="small" color={theme.colors.white} />
+            ) : (
+              <Icon as={icon} size={20} color="white" />
+            )}
+          </View>
+        </Animated.View>
+      </GestureDetector>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create((theme) => ({
-  wrapper: {
-    width: 280,
-    height: 60,
-  },
   container: {
     width: '100%',
-    height: '100%',
+    height: 60,
     borderRadius: theme.borderRadius.full,
     borderWidth: 2,
     position: 'relative',
@@ -270,6 +289,7 @@ const styles = StyleSheet.create((theme) => ({
     position: 'absolute',
     left: 4,
     borderRadius: theme.borderRadius.full,
+    borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 3,
@@ -280,6 +300,9 @@ const styles = StyleSheet.create((theme) => ({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    // Android-specific optimizations for better touch handling
+    minHeight: 44, // Minimum touch target size for Android
+    minWidth: 44,
     variants: {
       variant: {
         normal: {
@@ -296,13 +319,5 @@ const styles = StyleSheet.create((theme) => ({
         false: {},
       },
     },
-  },
-
-  track: {
-    position: 'absolute',
-    left: 4,
-    height: 2,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 1,
   },
 }));

@@ -1,7 +1,7 @@
 import { useSegments } from 'expo-router';
 import React, { useEffect, type PropsWithChildren } from 'react';
-import type { ViewProps } from 'react-native';
-import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { View, type ViewProps } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -131,7 +131,7 @@ export const SwipeableView = ({
   }, [segments]);
 
   return (
-    <GestureHandlerRootView style={[styles.container, style]}>
+    <View style={[styles.container, style]}>
       {/* Hidden pan to be revealed when swiping */}
       <Animated.View style={[styles.hiddenPanBase, hiddenPanSideStyle, hiddenPanAnimatedStyle]}>
         {hiddenPan}
@@ -144,7 +144,7 @@ export const SwipeableView = ({
           {children}
         </Animated.View>
       </GestureDetector>
-    </GestureHandlerRootView>
+    </View>
   );
 };
 const styles = StyleSheet.create((theme) => ({
