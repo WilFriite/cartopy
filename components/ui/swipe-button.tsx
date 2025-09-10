@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { ViewProps, ActivityIndicator } from 'react-native';
+import { ViewProps, ActivityIndicator, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -19,7 +19,7 @@ import { ArrowRight } from 'lucide-react-native';
  */
 interface SwipeButtonProps extends ViewProps {
   /** Callback function to execute when swipe is completed */
-  onSwipeComplete: () => void;
+  onSwipeComplete: () => Promise<void>;
   /** Text to display in the button */
   text?: string;
   /** Icon to display in the swipeable button */
@@ -111,7 +111,7 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
       if (progress > 0.8 || (progress > 0.5 && velocity > 500)) {
         console.log('SwipeButton: Completing swipe');
         // Complete the swipe
-        translateX.value = withTiming(maxTranslateX, { duration: 200 });
+        translateX.value = withTiming(maxTranslateX, { duration: 10 });
         isCompleted.value = true;
         handleSwipeComplete();
       } else {
@@ -138,7 +138,7 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
     );
 
     return {
-      transform: [{ translateX: translateX.value }, { rotate: `${progress * 360}deg` }],
+      transform: [{ translateX: translateX.value }],
       borderColor,
     };
   });
@@ -169,16 +169,6 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
 
     return {
       opacity,
-    };
-  });
-
-  // Animated styles for the icon
-  const iconAnimatedStyle = useAnimatedStyle(() => {
-    const progress = translateX.value / maxTranslateX;
-    const scale = interpolate(progress, [0.7, 1], [1, 1.2], 'clamp');
-
-    return {
-      transform: [{ scale }],
     };
   });
 
@@ -228,13 +218,13 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
           accessible={true}
           accessibilityRole="button"
           accessibilityLabel="Swipe button">
-          <Animated.View style={iconAnimatedStyle}>
+          <View>
             {isLoading ? (
               <ActivityIndicator size="small" color={theme.colors.white} />
             ) : (
               <Icon as={icon} size={20} color="white" />
             )}
-          </Animated.View>
+          </View>
         </Animated.View>
       </GestureDetector>
     </Animated.View>
