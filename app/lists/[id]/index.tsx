@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlatList } from 'react-native-gesture-handler';
 import type BottomSheet from '@gorhom/bottom-sheet';
 import { EditBottomSheet } from '~/components/ui/edit-bottom-sheet';
+import { DashedBox } from '~/components/ui/dashed-box';
 
 export default function ViewTab() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -90,7 +91,10 @@ export default function ViewTab() {
               />
             </VStack>
           ) : (
-            <View style={styles.emptyStateContainer}>
+            <DashedBox
+              style={styles.emptyStateContainer}
+              backgroundColor="surface"
+              borderColor="astral">
               <Text size="lg" weight="bold" color="muted" align="center">
                 Aucun article dans cette liste.
               </Text>
@@ -101,7 +105,7 @@ export default function ViewTab() {
                 </Text>{' '}
                 juste à côté.
               </Text>
-            </View>
+            </DashedBox>
           )}
         </VStack>
 
@@ -183,11 +187,7 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   emptyStateContainer: {
     padding: theme.spacing['2xl'],
-    backgroundColor: theme.colors.surface,
     borderRadius: theme.borderRadius.md,
-    borderWidth: 1,
-    borderColor: theme.colors.outline,
-    borderStyle: 'dashed',
   },
   toggleButton: {
     paddingHorizontal: theme.spacing.lg,
