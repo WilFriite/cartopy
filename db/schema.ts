@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { DateTime } from 'luxon';
 
 export const lists = sqliteTable('lists', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -7,7 +8,7 @@ export const lists = sqliteTable('lists', {
   items: text('items').default(sql`''`),
   createdAt: text('created_at')
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
+    .$defaultFn(() => DateTime.now().toISO()),
   lastPerformedAt: text('last_performed_at').default(sql`NULL`),
 });
 
