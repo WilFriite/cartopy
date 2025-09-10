@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import {
   TextInput as RNTextInput,
   TextInputProps as RNTextInputProps,
@@ -13,12 +13,13 @@ import { Text } from './typography';
 type TextareaVariants = UnistylesVariants<typeof styles>;
 
 export type TextareaProps = RNTextInputProps &
-  Omit<TextareaVariants, 'variant' | 'state' | 'validation'> & {
+  TextareaVariants & {
     appearance?: 'outline' | 'filled';
     label?: string;
     helperText?: string;
     containerStyle?: StyleProp<ViewStyle>;
     isError?: boolean;
+    centered?: boolean;
   };
 
 export const Textarea = forwardRef<RNTextInput, TextareaProps>(
@@ -35,6 +36,7 @@ export const Textarea = forwardRef<RNTextInput, TextareaProps>(
       onBlur,
       style,
       isError = false,
+      centered = false,
       ...props
     },
     ref
@@ -46,7 +48,7 @@ export const Textarea = forwardRef<RNTextInput, TextareaProps>(
     useImperativeHandle(ref, () => inputRef.current as RNTextInput);
 
     styles.useVariants({
-      size,
+      size: centered ? undefined : size,
       state: editable ? (isFocused ? 'focused' : undefined) : 'disabled',
       validation: isError ? 'error' : 'normal',
     });
@@ -67,8 +69,7 @@ export const Textarea = forwardRef<RNTextInput, TextareaProps>(
             ref={inputRef}
             editable={editable}
             multiline
-            style={[styles.input, style]}
-            textAlignVertical="top"
+            style={[styles.input(centered), style]}
             onFocus={(e) => {
               setIsFocused(true);
               onFocus?.(e);
@@ -118,6 +119,9 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.colors.surface,
     variants: {
       size: {
+        default: {
+          minHeight: 50,
+        },
         sm: {
           minHeight: 80,
         },
@@ -156,9 +160,9 @@ const styles = StyleSheet.create((theme) => ({
       },
     ],
   },
-  input: {
+  input: (centered: boolean) => ({
     color: theme.colors.typography,
-    paddingVertical: 0,
+    paddingVertical: centered ? theme.spacing.md : 0,
     variants: {
       size: {
         sm: {
@@ -172,7 +176,7 @@ const styles = StyleSheet.create((theme) => ({
         },
       },
     },
-  },
+  }),
 }));
 
 export type { TextareaVariants };
