@@ -1,10 +1,9 @@
-import { Stack } from 'expo-router';
-import { Platform } from 'react-native';
+import { Stack, router } from 'expo-router';
+import { Platform, View } from 'react-native';
 import { Button, ButtonText } from '~/components/ui/btn';
 
 import { Container } from '~/components/ui/container';
 import { Input } from '~/components/ui/input';
-import { Textarea } from '~/components/ui/textarea';
 import { ErrorText, Text } from '~/components/ui/typography';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
@@ -12,15 +11,22 @@ import { lists, type ListInsertType } from '~/db/schema';
 import { useMutation } from '@tanstack/react-query';
 import { useDrizzle } from '~/hooks/use-drizzle';
 import { VStack } from '~/components/ui/stack';
+import Animated, { FadeIn, FadeOut, SlideInDown } from 'react-native-reanimated';
+import { X } from 'lucide-react-native';
+import { Icon } from '~/components/ui/icon';
+import { Pressable } from 'react-native';
 import { sql } from 'drizzle-orm';
 import { formatListItems } from '~/utils/format';
 import { KeyboardAvoidingView, KeyboardToolbar } from 'react-native-keyboard-controller';
 import { useKbdHeight } from '~/hooks/use-kbd-height';
+import { StyleSheet } from 'react-native-unistyles';
 
 const defaultValues: ListInsertType = {
   name: '',
   items: '',
 };
+
+const AnimatedView = Animated.View;
 
 const nameSchema = z
   .string()
@@ -30,15 +36,7 @@ const nameSchema = z
     'Le nom ne doit contenir que des lettres, chiffres et espaces.'
   );
 
-const itemsRegex = /^[A-Za-z0-9 ,]+$/;
-
-const itemsSchema = z
-  .string()
-  .default('')
-  .refine(
-    (value) => !value || value.trim() === '' || itemsRegex.test(value),
-    'Seulement des lettres, chiffres, espaces et virgules sont autorisés.'
-  );
+// Removed items validation as we're not using items field anymore
 
 export default function CreateListPage() {
   const db = useDrizzle();
@@ -47,12 +45,9 @@ export default function CreateListPage() {
   const saveUserMutation = useMutation({
     mutationFn: async (value: ListInsertType) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      const formattedItems = formatListItems(value.items)
-        .map((item) => item[0].toUpperCase() + item.slice(1))
-        .join(', ');
       await db.insert(lists).values({
-        ...value,
-        items: formattedItems,
+        name: value.name,
+        items: '', // Empty items for now
       });
     },
   });
@@ -63,20 +58,43 @@ export default function CreateListPage() {
       console.log(value);
       await saveUserMutation.mutateAsync(value);
       formApi.reset();
+      router.back();
     },
   });
 
+  const handleClose = () => {
+    router.back();
+  };
+
   return (
     <>
-      <Stack.Screen options={{ title: 'Ajouter' }} />
-      <Container>
-        <Text size="xl" align="center">
-          Création
-        </Text>
+      <Stack.Screen 
+        options={{ 
+          headerShown: false,
+          presentation: 'transparentModal',
+          animation: 'fade',
+        }} 
+      />
+      <AnimatedView 
+          entering={FadeIn.duration(300)}
+        style={styles.modalBackdrop}>
+        <Pressable 
+          style={styles.backdropPressable} 
+          onPress={handleClose}
+        />
+        <AnimatedView
+          entering={SlideInDown.duration(400).springify()}
+          style={styles.modalContent}>
+          <View style={styles.modalHeader}>
+            <Text size="xl" weight="bold">Nouvelle liste</Text>
+            <Pressable onPress={handleClose} style={styles.closeButton}>
+              <Icon as={X} size={24} color="muted" />
+            </Pressable>
+          </View>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={height.value + 30}
-          style={{ flex: 1 }}>
+          style={styles.keyboardAvoidingView}>
           <VStack justify="between">
             <form.Field
               name="name"
@@ -102,6 +120,8 @@ export default function CreateListPage() {
                     value={field.state.value}
                     onChangeText={field.handleChange}
                     isError={field.state.meta.errors.length > 0}
+                    placeholder="Ex: Courses de la semaine"
+                    autoFocus
                   />
                   {field.state.meta.errors.length > 0 ? (
                     <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
@@ -110,29 +130,7 @@ export default function CreateListPage() {
               )}
             </form.Field>
 
-            <form.Field
-              name="items"
-              validators={{
-                onChange: itemsSchema,
-              }}>
-              {(field) => (
-                <VStack>
-                  <Textarea
-                    label="Articles à ajouter"
-                    size="md"
-                    helperText="Séparés par des virgules… (ex: Pain, Lait, Œufs)"
-                    id={field.name}
-                    value={field.state.value || ''}
-                    onBlur={field.handleBlur}
-                    onChangeText={field.handleChange}
-                    isError={field.state.meta.errors.length > 0}
-                  />
-                  {field.state.meta.errors.length > 0 ? (
-                    <ErrorText>{field.state.meta.errors[0]?.message}</ErrorText>
-                  ) : null}
-                </VStack>
-              )}
-            </form.Field>
+            {/* Items input removed as per requirements */}
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
               {([canSubmit, isSubmitting]) => (
                 <Button
@@ -146,8 +144,51 @@ export default function CreateListPage() {
             </form.Subscribe>
           </VStack>
         </KeyboardAvoidingView>
-      </Container>
+        </AnimatedView>
+      </AnimatedView>
       <KeyboardToolbar showArrows={false} insets={{ left: 16, right: 0 }} doneText="Fermer" />
     </>
   );
 }
+
+const styles = StyleSheet.create((theme) => ({
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  backdropPressable: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  modalContent: {
+    flex: 1,
+    marginTop: 100,
+    backgroundColor: theme.colors.background,
+    borderTopLeftRadius: theme.borderRadius['2xl'],
+    borderTopRightRadius: theme.borderRadius['2xl'],
+    padding: theme.spacing.xl,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.xl,
+  },
+  closeButton: {
+    padding: theme.spacing.sm,
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+}));

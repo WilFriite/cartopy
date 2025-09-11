@@ -12,11 +12,12 @@ import { Text } from '~/components/ui/typography';
 import { lists, ListSelectType } from '~/db/schema';
 import { useDrizzle } from '~/hooks/use-drizzle';
 import { formatListItems } from '~/utils/format';
-import { Link, router } from 'expo-router';
-import { Eye, PlusCircle, Trash } from 'lucide-react-native';
+import { router } from 'expo-router';
+import { Eye, Trash } from 'lucide-react-native';
 import { eq } from 'drizzle-orm';
 import { useMutation } from '@tanstack/react-query';
 import { FlatList } from 'react-native-gesture-handler';
+import { FAB } from '~/components/ui/fab';
 
 export default function DisplayListsPage() {
   const db = useDrizzle();
@@ -64,18 +65,11 @@ export default function DisplayListsPage() {
                 onPress={() => handleDeleteList(item)}>
                 <ButtonIcon as={Trash} />
               </Button>
-              <Link
-                href={{
-                  pathname: '/lists/[id]',
-                  params: {
-                    id: item.id.toString(),
-                  },
-                }}
-                asChild>
-                <Button style={styles.buttonItem}>
-                  <ButtonIcon as={Eye} />
-                </Button>
-              </Link>
+              <Button 
+                style={styles.buttonItem}
+                onPress={() => router.push(`/lists/${item.id}`)}>
+                <ButtonIcon as={Eye} />
+              </Button>
             </HStack>
           </View>
         }>
@@ -90,6 +84,10 @@ export default function DisplayListsPage() {
       </SwipeableView>
     );
   }, []);
+
+  const handleCreatePress = () => {
+    router.push('/lists/screens/create');
+  };
 
   return (
     <Container>
@@ -113,14 +111,12 @@ export default function DisplayListsPage() {
             source={require('~/assets/images/lost.gif')}
             style={styles.emptyListImage}
           />
-          <Link href="/lists/create" asChild>
-            <Button>
-              <ButtonIcon as={PlusCircle} />
-              <ButtonText>Ajouter une liste</ButtonText>
-            </Button>
-          </Link>
+          <Button onPress={handleCreatePress}>
+            <ButtonText>Créer votre première liste</ButtonText>
+          </Button>
         </View>
       )}
+      {data.length > 0 && <FAB onPress={handleCreatePress} />}
     </Container>
   );
 }
